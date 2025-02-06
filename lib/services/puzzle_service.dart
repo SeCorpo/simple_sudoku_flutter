@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:flutter/services.dart' show rootBundle;
 import '../models/puzzle_model.dart';
 import '../models/cell_model.dart';
@@ -16,8 +17,11 @@ class PuzzleService {
     }
   }
 
-  /// Generate a random puzzle
+  /// Generate a random puzzle with a mix of filled and empty cells
   static PuzzleModel generateRandomPuzzle({int size = 5}) {
+    final Random random = Random();
+
+    // Generate a grid with random true/false values (50% filled probability)
     List<List<CellModel>> grid = List.generate(
       size,
           (row) => List.generate(
@@ -25,11 +29,12 @@ class PuzzleService {
             (col) => CellModel(
           row: row,
           col: col,
-          isCorrect: (row + col) % 2 == 0, // Example: Checkerboard pattern
+          isCorrect: random.nextBool(), // 50% chance of being filled
         ),
       ),
     );
 
+    // Generate row and column clues dynamically
     List<List<int>> rowClues = _generateGroupedClues(grid, isRow: true);
     List<List<int>> colClues = _generateGroupedClues(grid, isRow: false);
 

@@ -13,11 +13,12 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> {
   late PuzzleModel puzzle;
+  bool _showSolution = false; // Controls whether to show the solution
 
   @override
   void initState() {
     super.initState();
-    puzzle = PuzzleService.generateRandomPuzzle(size: 6);
+    puzzle = PuzzleService.generateRandomPuzzle(size: 10);
   }
 
   void toggleCellState(int row, int col) {
@@ -53,43 +54,68 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  /// Toggle visibility of the correct answers
+  void _toggleSolutionView() {
+    setState(() {
+      _showSolution = !_showSolution;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Nonogram Puzzle")),
+      appBar: AppBar(
+        title: const Text("Simple Sudoku Puzzle"),
+        actions: [
+          IconButton(
+            icon: Icon(_showSolution ? Icons.visibility_off : Icons.visibility),
+            onPressed: _toggleSolutionView,
+            tooltip: _showSolution ? "Hide Solution" : "Show Solution",
+          ),
+        ],
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           double gridSize = constraints.maxWidth < 600 ? 30 : 40;
+          double maxClueWidth = (gridSize * 2).clamp(40, 80); // Ensure row clues are wide enough
+          double maxClueHeight = (gridSize * 2).clamp(40, 80); // Ensure column clues are tall enough
 
           return Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Column Clues
+                // Top Clue Numbers (Column Clues)
                 SizedBox(
-                  height: gridSize * 2,
-                  child: ClueNumbers(clues: puzzle.colClues, isRow: false, gridSize: gridSize),
+                  height: maxClueHeight,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: maxClueWidth), // Align with row clues
+                    child: ClueNumbers(clues: puzzle.colClues, isRow: false, gridSize: gridSize),
+                  ),
                 ),
 
                 // Main Content (Row Clues + Grid)
-                Expanded(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Row Clues (Left of Grid)
-                      SizedBox(
-                        width: gridSize * 2,
-                        child: ClueNumbers(clues: puzzle.rowClues, isRow: true, gridSize: gridSize),
-                      ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Left Clue Numbers (Row Clues)
+                    SizedBox(
+                      width: maxClueWidth,
+                      child: ClueNumbers(clues: puzzle.rowClues, isRow: true, gridSize: gridSize),
+                    ),
 
-                      // Puzzle Grid
-                      SizedBox(
-                        width: gridSize * puzzle.cols,
-                        height: gridSize * puzzle.rows,
-                        child: GameGrid(puzzle: puzzle, onCellTap: toggleCellState, gridSize: gridSize),
+                    // Puzzle Grid
+                    SizedBox(
+                      width: gridSize * puzzle.cols,
+                      height: gridSize * puzzle.rows,
+                      child: GameGrid(
+                        puzzle: puzzle,
+                        onCellTap: toggleCellState,
+                        gridSize: gridSize,
+                        showSolution: _showSolution, // Pass solution visibility state
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ],
             ),
