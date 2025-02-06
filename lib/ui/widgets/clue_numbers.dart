@@ -29,38 +29,50 @@ class ClueNumbers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int maxNumbers = clues.fold(1, (max, clue) => clue.length > max ? clue.length : max);
+
     return isRow
         ? Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: clues.map((clue) {
+      children: List.generate(clues.length, (index) {
         return Container(
-          width: gridSize * 1.8, // Adjust width for better alignment
-          height: gridSize,
+          width: gridSize * 2, // Ensure row clues have enough width
+          height: gridSize, // Match row height
           alignment: Alignment.centerRight,
           padding: EdgeInsets.symmetric(horizontal: gridSize * 0.2),
-          child: Text(
-            clue.join(" "), // Display grouped numbers
-            textAlign: TextAlign.right,
-            style: TextStyle(fontSize: gridSize * 0.5, fontWeight: FontWeight.bold),
+          child: FittedBox(
+            alignment: Alignment.centerRight,
+            child: Text(
+              clues[index].join(" "), // Display grouped numbers inline
+              textAlign: TextAlign.right,
+              style: TextStyle(fontSize: gridSize * 0.4, fontWeight: FontWeight.bold),
+            ),
           ),
         );
-      }).toList(),
+      }),
     )
         : Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: clues.map((clue) {
+      children: List.generate(clues.length, (index) {
         return Container(
-          width: gridSize,
-          height: gridSize * 1.8, // Adjust height for alignment
+          width: gridSize, // Ensure column clues have enough width
+          height: gridSize * maxNumbers, // Adjust height dynamically
           alignment: Alignment.bottomCenter,
-          padding: EdgeInsets.symmetric(vertical: gridSize * 0.2),
-          child: Text(
-            clue.join("\n"), // Show numbers in separate lines
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: gridSize * 0.5, fontWeight: FontWeight.bold),
+          padding: EdgeInsets.symmetric(vertical: gridSize * 0.1),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: clues[index]
+                .map((num) => Flexible(
+              child: Text(
+                "$num",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: gridSize * 0.4, fontWeight: FontWeight.bold),
+              ),
+            ))
+                .toList(),
           ),
         );
-      }).toList(),
+      }),
     );
   }
 }

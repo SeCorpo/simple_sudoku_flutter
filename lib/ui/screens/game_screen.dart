@@ -18,7 +18,7 @@ class _GameScreenState extends State<GameScreen> {
   @override
   void initState() {
     super.initState();
-    puzzle = PuzzleService.generateRandomPuzzle(size: 10);
+    puzzle = PuzzleService.generateRandomPuzzle(size: 7);
   }
 
   void toggleCellState(int row, int col) {
@@ -43,7 +43,7 @@ class _GameScreenState extends State<GameScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
                 setState(() {
-                  puzzle = PuzzleService.generateRandomPuzzle(size: 10);
+                  puzzle = PuzzleService.generateRandomPuzzle(size: 7);
                 });
               },
               child: const Text("New Puzzle"),
@@ -77,8 +77,12 @@ class _GameScreenState extends State<GameScreen> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           double gridSize = constraints.maxWidth < 600 ? 30 : 40;
-          double maxClueWidth = (gridSize * 2).clamp(40, 80); // Ensure row clues are wide enough
-          double maxClueHeight = (gridSize * 2).clamp(40, 80); // Ensure column clues are tall enough
+
+          int maxRowClueLength = puzzle.rowClues.fold(1, (max, clue) => clue.length > max ? clue.length : max);
+          int maxColClueLength = puzzle.colClues.fold(1, (max, clue) => clue.length > max ? clue.length : max);
+
+          double dynamicClueWidth = (gridSize * maxRowClueLength).clamp(50, 150); // Left Clues Width
+          double dynamicClueHeight = (gridSize * maxColClueLength).clamp(50, 150); // Top Clues Height
 
           return Center(
             child: Column(
@@ -86,9 +90,9 @@ class _GameScreenState extends State<GameScreen> {
               children: [
                 // Top Clue Numbers (Column Clues)
                 SizedBox(
-                  height: maxClueHeight,
+                  height: dynamicClueHeight,
                   child: Padding(
-                    padding: EdgeInsets.only(left: maxClueWidth), // Align with row clues
+                    padding: EdgeInsets.only(left: dynamicClueWidth), // Align with row clues
                     child: ClueNumbers(clues: puzzle.colClues, isRow: false, gridSize: gridSize),
                   ),
                 ),
@@ -100,7 +104,7 @@ class _GameScreenState extends State<GameScreen> {
                   children: [
                     // Left Clue Numbers (Row Clues)
                     SizedBox(
-                      width: maxClueWidth,
+                      width: dynamicClueWidth,
                       child: ClueNumbers(clues: puzzle.rowClues, isRow: true, gridSize: gridSize),
                     ),
 
