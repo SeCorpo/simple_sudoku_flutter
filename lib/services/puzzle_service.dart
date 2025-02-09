@@ -1,26 +1,13 @@
-import 'dart:convert';
 import 'dart:math';
-import 'package:flutter/services.dart' show rootBundle;
 import '../models/puzzle_model.dart';
 import '../models/cell_model.dart';
 import '../ui/widgets/clue_numbers.dart'; // Import ClueNumbers to use grouping function
 
 class PuzzleService {
-  /// Load a puzzle from a JSON file
-  static Future<PuzzleModel> loadPuzzleFromJson(String filePath) async {
-    try {
-      String jsonString = await rootBundle.loadString(filePath);
-      Map<String, dynamic> jsonData = jsonDecode(jsonString);
-      return PuzzleModel.fromJson(jsonData);
-    } catch (e) {
-      throw Exception('Failed to load puzzle: $e');
-    }
-  }
+  final Random _random = Random();
 
   /// Generate a random puzzle with a mix of filled and empty cells
-  static PuzzleModel generateRandomPuzzle({int size = 5}) {
-    final Random random = Random();
-
+  PuzzleModel generateRandomPuzzle({int size = 5}) {
     // Generate a grid with random true/false values (50% filled probability)
     List<List<CellModel>> grid = List.generate(
       size,
@@ -29,7 +16,7 @@ class PuzzleService {
             (col) => CellModel(
           row: row,
           col: col,
-          isCorrect: random.nextBool(), // 50% chance of being filled
+          isCorrect: _random.nextBool(), // 50% chance of being filled
         ),
       ),
     );
@@ -48,7 +35,7 @@ class PuzzleService {
   }
 
   /// **Generate grouped clues based on consecutive filled cells**
-  static List<List<int>> _generateGroupedClues(List<List<CellModel>> grid, {required bool isRow}) {
+  List<List<int>> _generateGroupedClues(List<List<CellModel>> grid, {required bool isRow}) {
     int size = grid.length;
     List<List<int>> clues = List.generate(size, (_) => []);
 
