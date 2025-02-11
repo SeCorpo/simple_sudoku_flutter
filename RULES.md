@@ -1,0 +1,1 @@
+1. Don't use bloc provider in screens, instate get bloc from the context, initiated in main

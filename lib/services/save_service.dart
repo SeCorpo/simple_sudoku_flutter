@@ -6,10 +6,17 @@ import '../models/puzzle_model.dart';
 class SaveService {
   static const String _fileName = "puzzles.json";
 
-  /// Get the file location for saving puzzles
+  /// Get the file object pointing to the saved puzzles file.
   Future<File> _getFile() async {
     final directory = await getApplicationDocumentsDirectory();
-    return File("${directory.path}/$_fileName");
+    final path = "${directory.path}/simple_sudoku";
+    final folder = Directory(path);
+
+    if (!folder.existsSync()) {
+      folder.createSync(recursive: true);
+    }
+
+    return File("$path/$_fileName");
   }
 
   /// Load all saved puzzles

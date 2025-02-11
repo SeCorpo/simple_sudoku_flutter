@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/game/game_bloc.dart';
-import '../../services/puzzle_service.dart';
-import '../../services/save_service.dart';
+import '../../bloc/provider/provider_bloc.dart';
 import 'game_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -10,6 +9,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<ProviderBloc>().add(LoadSavedPuzzles());
+
     return Scaffold(
       appBar: AppBar(title: const Text("Select a Puzzle")),
       body: Padding(
@@ -17,13 +18,9 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-
             ElevatedButton(
               onPressed: () {
-                final puzzleService = context.read<PuzzleService>();
-                final newPuzzle = puzzleService.generateRandomPuzzle(size: 7);
-
-                context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: newPuzzle));
+                context.read<GameBloc>().add(GenerateNewPuzzle(size: 7));
 
                 Navigator.push(
                   context,
@@ -34,41 +31,37 @@ class HomeScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            FutureBuilder(
-              future: context.read<SaveService>().loadPuzzles(),
-              builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
+            BlocBuilder<ProviderBloc, ProviderState>(
+              builder: (context, state) {
+                if (state is LoadingSavedPuzzles) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                if (snapshot.hasError) {
-                  return const Center(child: Text("Error loading saved puzzles"));
-                }
-                final puzzles = snapshot.data ?? [];
-
-                if (puzzles.isEmpty) {
+                if (state is NoSavedPuzzles) {
                   return const Center(child: Text("No saved puzzles found"));
                 }
+                if (state is SavedPuzzlesLoaded) {
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: state.puzzles.length,
+                      itemBuilder: (context, index) {
+                        final puzzle = state.puzzles[index];
+                        return ListTile(
+                          title: Text("Puzzle ${index + 1}"),
+                          trailing: const Icon(Icons.play_arrow),
+                          onTap: () {
+                            context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: puzzle));
 
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: puzzles.length,
-                    itemBuilder: (context, index) {
-                      final puzzle = puzzles[index];
-                      return ListTile(
-                        title: Text("Puzzle ${index + 1}"),
-                        trailing: const Icon(Icons.play_arrow),
-                        onTap: () {
-                          context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: puzzle));
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const GameScreen()),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const GameScreen()),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  );
+                }
+                return const Center(child: Text("Error loading puzzles"));
               },
             ),
           ],

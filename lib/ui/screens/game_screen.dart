@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/game/game_bloc.dart';
+import '../../bloc/provider/provider_bloc.dart';
 import '../../models/puzzle_model.dart';
 import '../widgets/game_grid.dart';
 import '../widgets/clue_numbers.dart';
@@ -26,18 +27,31 @@ class GameScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<GameBloc, GameState>(
-        builder: (context, state) {
-          if (state is GameInitial) {
-            return _buildInitialScreen(context);
-          } else if (state is GameLoaded) {
-            return _buildGameUI(context, state.puzzle, state.showSolution);
-          } else if (state is GameWon) {
-            return _buildGameUI(context, state.puzzle, false, isWon: true);
-          } else {
-            return const Center(child: Text("Unknown state"));
+      body: BlocListener<ProviderBloc, ProviderState>(
+        listener: (context, state) {
+          if (state is PuzzleSaved) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Puzzle saved successfully!")),
+            );
+          } else if (state is SavePuzzleError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error)),
+            );
           }
         },
+        child: BlocBuilder<GameBloc, GameState>(
+          builder: (context, state) {
+            if (state is GameInitial) {
+              return _buildInitialScreen(context);
+            } else if (state is GameLoaded) {
+              return _buildGameUI(context, state.puzzle, state.showSolution);
+            } else if (state is GameWon) {
+              return _buildGameUI(context, state.puzzle, false, isWon: true);
+            } else {
+              return const Center(child: Text("Unknown state"));
+            }
+          },
+        ),
       ),
     );
   }
@@ -106,12 +120,19 @@ class GameScreen extends StatelessWidget {
             child: const Text("New Puzzle"),
           ),
 
-          // Show "You Won!" if the game is completed
-          if (isWon)
+          // Show "You Won!" and Save Button if the game is completed
+          if (isWon) ...[
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text("🎉 You Won! 🎉", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             ),
+            ElevatedButton(
+              onPressed: () {
+                context.read<ProviderBloc>().add(SavePuzzle(puzzle: puzzle));
+              },
+              child: const Text("Save Puzzle"),
+            ),
+          ],
         ],
       ),
     );
