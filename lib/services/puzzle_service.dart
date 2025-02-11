@@ -1,13 +1,15 @@
 import 'dart:math';
 import '../models/puzzle_model.dart';
 import '../models/cell_model.dart';
-import '../ui/widgets/clue_numbers.dart'; // Import ClueNumbers to use grouping function
 
 class PuzzleService {
   final Random _random = Random();
 
-  /// Generate a random puzzle with a mix of filled and empty cells
-  PuzzleModel generateRandomPuzzle({int size = 5}) {
+  /// **Generate a random puzzle**
+  PuzzleModel generateRandomPuzzle({int size = 5, PuzzleDifficulty difficulty = PuzzleDifficulty.float}) {
+    // Generate unique puzzle ID
+    String puzzleId = DateTime.now().millisecondsSinceEpoch.toString();
+
     // Generate a grid with random true/false values (50% filled probability)
     List<List<CellModel>> grid = List.generate(
       size,
@@ -21,35 +23,18 @@ class PuzzleService {
       ),
     );
 
-    // Generate row and column clues dynamically
-    List<List<int>> rowClues = _generateGroupedClues(grid, isRow: true);
-    List<List<int>> colClues = _generateGroupedClues(grid, isRow: false);
+    // Generate row and column clues using PuzzleModel's method
+    List<List<int>> rowClues = PuzzleModel.generateGroupedClues(grid, isRow: true);
+    List<List<int>> colClues = PuzzleModel.generateGroupedClues(grid, isRow: false);
 
     return PuzzleModel(
+      puzzleId: puzzleId,
       rows: size,
       cols: size,
+      difficulty: difficulty,
       grid: grid,
       rowClues: rowClues,
       colClues: colClues,
     );
-  }
-
-  /// **Generate grouped clues based on consecutive filled cells**
-  List<List<int>> _generateGroupedClues(List<List<CellModel>> grid, {required bool isRow}) {
-    int size = grid.length;
-    List<List<int>> clues = List.generate(size, (_) => []);
-
-    for (int i = 0; i < size; i++) {
-      List<bool> filledCells = [];
-
-      for (int j = 0; j < size; j++) {
-        CellModel cell = isRow ? grid[i][j] : grid[j][i];
-        filledCells.add(cell.isCorrect);
-      }
-
-      clues[i] = ClueNumbers.groupClueNumbers(filledCells);
-    }
-
-    return clues;
   }
 }

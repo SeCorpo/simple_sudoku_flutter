@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:simple_sudoku_flutter/core/utils/string_utils.dart';
 import '../../bloc/game/game_bloc.dart';
 import '../../bloc/provider/provider_bloc.dart';
 import 'game_screen.dart';
@@ -20,7 +21,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                context.read<GameBloc>().add(GenerateNewPuzzle(size: 7));
+                context.read<GameBloc>().add(GenerateNewPuzzle(size: 5));
 
                 Navigator.push(
                   context,
@@ -46,7 +47,7 @@ class HomeScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final puzzle = state.puzzles[index];
                         return ListTile(
-                          title: Text("Puzzle ${index + 1}"),
+                          title: Text("Puzzle ${index + 1} - ${puzzle.rows} ${StringUtils.capitalize(puzzle.difficulty.name)}"),
                           trailing: const Icon(Icons.play_arrow),
                           onTap: () {
                             context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: puzzle));

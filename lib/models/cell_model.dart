@@ -1,48 +1,31 @@
-
 class CellModel {
-  int row;
-  int col;
-  bool isFilled;
-  bool isMarked;
-  bool isCorrect; // If this cell should be filled based on the solution
+  final int row;
+  final int col;
+  bool isFilled = false;
+  final bool isCorrect;
 
   CellModel({
     required this.row,
     required this.col,
-    this.isFilled = false,
-    this.isMarked = false,
-    this.isCorrect = false,
+    required this.isCorrect,
   });
 
-  // Toggle cell state (filled -> empty -> marked)
+  /// **Toggle between empty and filled**
   void toggle() {
-    if (isFilled) {
-      isFilled = false;
-      isMarked = true;
-    } else if (isMarked) {
-      isMarked = false;
-    } else {
-      isFilled = true;
-    }
+    isFilled = !isFilled;
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'row': row,
-      'col': col,
-      'isFilled': isFilled,
-      'isMarked': isMarked,
-      'isCorrect': isCorrect,
-    };
-  }
+  /// **Convert to JSON (Only Saves Solution State)**
+  Map<String, dynamic> toJson() => {
+    'row': row,
+    'col': col,
+    'isCorrect': isCorrect,
+  };
 
-  factory CellModel.fromJson(Map<String, dynamic> json) {
-    return CellModel(
-      row: json['row'],
-      col: json['col'],
-      isFilled: json['isFilled'] ?? false,
-      isMarked: json['isMarked'] ?? false,
-      isCorrect: json['isCorrect'] ?? false,
-    );
-  }
+  /// **Load CellModel from JSON (Resets User Selections)**
+  factory CellModel.fromJson(Map<String, dynamic> json) => CellModel(
+    row: json['row'],
+    col: json['col'],
+    isCorrect: json['isCorrect'],
+  );
 }

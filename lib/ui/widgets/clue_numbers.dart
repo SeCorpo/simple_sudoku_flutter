@@ -8,24 +8,6 @@ class ClueNumbers extends StatelessWidget {
   const ClueNumbers({Key? key, required this.clues, required this.isRow, required this.gridSize})
       : super(key: key);
 
-  /// **Groups consecutive filled cells into numbers**
-  static List<int> groupClueNumbers(List<bool> cells) {
-    List<int> groupedNumbers = [];
-    int count = 0;
-
-    for (bool isFilled in cells) {
-      if (isFilled) {
-        count++;
-      } else if (count > 0) {
-        groupedNumbers.add(count);
-        count = 0;
-      }
-    }
-
-    if (count > 0) groupedNumbers.add(count); // Add last group if exists
-
-    return groupedNumbers.isEmpty ? [0] : groupedNumbers; // Ensure at least [0]
-  }
 
   @override
   Widget build(BuildContext context) {

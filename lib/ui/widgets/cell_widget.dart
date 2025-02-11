@@ -6,7 +6,8 @@ class CellWidget extends StatelessWidget {
   final VoidCallback onTap;
   final double gridSize;
 
-  const CellWidget({Key? key, required this.cell, required this.onTap, required this.gridSize}) : super(key: key);
+  const CellWidget({Key? key, required this.cell, required this.onTap, required this.gridSize})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,21 +15,15 @@ class CellWidget extends StatelessWidget {
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: onTap,
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
           width: gridSize,
           height: gridSize,
           margin: const EdgeInsets.all(2),
           decoration: BoxDecoration(
-            color: cell.isFilled
-                ? Colors.black
-                : cell.isMarked
-                ? Colors.red
-                : Colors.white,
+            color: cell.isFilled ? Colors.black : Colors.white,
             border: Border.all(color: Colors.black),
           ),
-          child: cell.isMarked
-              ? Icon(Icons.close, color: Colors.white, size: gridSize * 0.6)
-              : null,
         ),
       ),
     );

@@ -5,6 +5,7 @@ import '../../bloc/provider/provider_bloc.dart';
 import '../../models/puzzle_model.dart';
 import '../widgets/game_grid.dart';
 import '../widgets/clue_numbers.dart';
+import '../widgets/slider_widget.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -58,12 +59,7 @@ class GameScreen extends StatelessWidget {
 
   /// Show "New Puzzle" button when no puzzle is loaded (fail-safe feature)
   Widget _buildInitialScreen(BuildContext context) {
-    return Center(
-      child: ElevatedButton(
-        onPressed: () => context.read<GameBloc>().add(GenerateNewPuzzle(size: 7)),
-        child: const Text("New Puzzle"),
-      ),
-    );
+    return _buildNewPuzzleButton(context);
   }
 
   Widget _buildGameUI(BuildContext context, PuzzleModel puzzle, bool showSolution, {bool isWon = false}) {
@@ -115,10 +111,7 @@ class GameScreen extends StatelessWidget {
           const SizedBox(height: 10),
 
           // "New Puzzle" Button
-          ElevatedButton(
-            onPressed: () => context.read<GameBloc>().add(GenerateNewPuzzle(size: 7)),
-            child: const Text("New Puzzle"),
-          ),
+          _buildNewPuzzleButton(context),
 
           // Show "You Won!" and Save Button if the game is completed
           if (isWon) ...[
@@ -137,4 +130,34 @@ class GameScreen extends StatelessWidget {
       ),
     );
   }
+
+  /// Button to generate a new puzzle with size selection
+  Widget _buildNewPuzzleButton(BuildContext context) {
+    int selectedSize = 7;
+
+    return Column(
+      children: [
+        SliderWidget(
+          min: 5,
+          max: 15,
+          divisions: 10,
+          initialValue: selectedSize,
+          onChanged: (size) {
+            selectedSize = size;
+          },
+        ),
+
+        const SizedBox(height: 10),
+
+        ElevatedButton(
+          onPressed: () {
+            context.read<GameBloc>().add(GenerateNewPuzzle(size: selectedSize));
+          },
+          child: const Text("New Puzzle"),
+        ),
+      ],
+    );
+  }
+
+
 }
