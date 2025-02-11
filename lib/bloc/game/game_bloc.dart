@@ -11,16 +11,18 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
   GameBloc(this._puzzleService) : super(GameInitial()) {
     on<GenerateNewPuzzle>(_onGenerateNewPuzzle);
+    on<StartGameWithPuzzle>(_onStartGameWithPuzzle);
     on<ToggleSolution>(_onToggleSolution);
     on<ToggleCell>(_onToggleCell);
-
-    // Initialize with a puzzle
-    add(GenerateNewPuzzle(size: 7));
   }
 
   void _onGenerateNewPuzzle(GenerateNewPuzzle event, Emitter<GameState> emit) {
     final puzzle = _puzzleService.generateRandomPuzzle(size: event.size);
     emit(GameLoaded(puzzle: puzzle, showSolution: false));
+  }
+
+  void _onStartGameWithPuzzle(StartGameWithPuzzle event, Emitter<GameState> emit) {
+    emit(GameLoaded(puzzle: event.puzzle, showSolution: false));
   }
 
   void _onToggleSolution(ToggleSolution event, Emitter<GameState> emit) {

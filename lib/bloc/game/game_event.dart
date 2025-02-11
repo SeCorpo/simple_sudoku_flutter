@@ -8,6 +8,11 @@ class GenerateNewPuzzle extends GameEvent {
   GenerateNewPuzzle({required this.size});
 }
 
+class StartGameWithPuzzle extends GameEvent {
+  final PuzzleModel puzzle;
+  StartGameWithPuzzle({required this.puzzle});
+}
+
 class ToggleSolution extends GameEvent {}
 
 class ToggleCell extends GameEvent {

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/game/game_bloc.dart';
 import '../../models/puzzle_model.dart';
-import '../../services/puzzle_service.dart';
 import '../widgets/game_grid.dart';
 import '../widgets/clue_numbers.dart';
 
@@ -11,40 +10,44 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => GameBloc(context.read<PuzzleService>()),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Nonogram Puzzle"),
-          actions: [
-            BlocBuilder<GameBloc, GameState>(
-              builder: (context, state) {
-                bool showSolution = false;
-                if (state is GameLoaded) {
-                  showSolution = state.showSolution;
-                }
-                return IconButton(
-                  icon: Icon(showSolution ? Icons.visibility_off : Icons.visibility),
-                  onPressed: () => context.read<GameBloc>().add(ToggleSolution()),
-                  tooltip: showSolution ? "Hide Solution" : "Show Solution",
-                );
-              },
-            ),
-          ],
-        ),
-        body: BlocBuilder<GameBloc, GameState>(
-          builder: (context, state) {
-            if (state is GameInitial) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is GameLoaded) {
-              return _buildGameUI(context, state.puzzle, state.showSolution);
-            } else if (state is GameWon) {
-              return _buildGameUI(context, state.puzzle, false, isWon: true);
-            } else {
-              return const Center(child: Text("Unknown state"));
-            }
-          },
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Simple Sudoku Game"),
+        actions: [
+          BlocBuilder<GameBloc, GameState>(
+            builder: (context, state) {
+              bool showSolution = (state is GameLoaded) ? state.showSolution : false;
+              return IconButton(
+                icon: Icon(showSolution ? Icons.visibility_off : Icons.visibility),
+                onPressed: () => context.read<GameBloc>().add(ToggleSolution()),
+                tooltip: showSolution ? "Hide Solution" : "Show Solution",
+              );
+            },
+          ),
+        ],
+      ),
+      body: BlocBuilder<GameBloc, GameState>(
+        builder: (context, state) {
+          if (state is GameInitial) {
+            return _buildInitialScreen(context);
+          } else if (state is GameLoaded) {
+            return _buildGameUI(context, state.puzzle, state.showSolution);
+          } else if (state is GameWon) {
+            return _buildGameUI(context, state.puzzle, false, isWon: true);
+          } else {
+            return const Center(child: Text("Unknown state"));
+          }
+        },
+      ),
+    );
+  }
+
+  /// Show "New Puzzle" button when no puzzle is loaded (fail-safe feature)
+  Widget _buildInitialScreen(BuildContext context) {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () => context.read<GameBloc>().add(GenerateNewPuzzle(size: 7)),
+        child: const Text("New Puzzle"),
       ),
     );
   }
