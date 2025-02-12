@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple_sudoku_flutter/core/utils/string_utils.dart';
+import 'package:simple_sudoku_flutter/ui/screens/settings_screen.dart';
 import '../../bloc/game/game_bloc.dart';
 import '../../bloc/provider/provider_bloc.dart';
 import 'game_screen.dart';
@@ -13,7 +14,20 @@ class HomeScreen extends StatelessWidget {
     context.read<ProviderBloc>().add(LoadSavedPuzzles());
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Select a Puzzle")),
+      appBar: AppBar(
+        title: const Text("Select a Puzzle"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
