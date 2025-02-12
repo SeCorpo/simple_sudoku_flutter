@@ -38,6 +38,7 @@ dependencies:
   flutter_bloc: ^9.0.0
   meta: ^1.15.0
   path_provider: ^2.1.5
+  shared_preferences: ^2.5.2
 
 dev_dependencies:
   flutter_test:

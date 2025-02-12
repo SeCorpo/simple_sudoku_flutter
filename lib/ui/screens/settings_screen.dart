@@ -21,15 +21,25 @@ class SettingsScreen extends StatelessWidget {
               builder: (context, state) {
                 bool isDarkMode = state.themeMode == ThemeMode.dark;
 
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                return Column(
                   children: [
-                    const Text("Dark Mode", style: TextStyle(fontSize: 16)),
-                    Switch(
-                      value: isDarkMode,
-                      onChanged: (bool value) {
-                        context.read<ThemeBloc>().add(ToggleTheme());
-                      },
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text("Dark Mode", style: TextStyle(fontSize: 16)),
+                        Switch(
+                          value: isDarkMode,
+                          onChanged: (bool value) {
+                            context.read<ThemeBloc>().add(ToggleTheme());
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    Text(
+                      "Current Theme: ${state.themeMode.toString().split('.').last}",
+                      style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
                     ),
                   ],
                 );
