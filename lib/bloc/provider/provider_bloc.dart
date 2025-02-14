@@ -25,7 +25,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
         if (difficultyComparison != 0) {
           return difficultyComparison;
         }
-        return b.starRating.compareTo(a.starRating);
+        return a.starRating.compareTo(b.starRating);
       });
       emit(SavedPuzzlesLoaded(puzzles: savedPuzzles));
     } else {
