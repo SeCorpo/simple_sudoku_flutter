@@ -46,36 +46,4 @@ app.*.map.json
 
 
 # Additional Flutter and platform-specific ignores
-android/.gradle/
-android/local.properties
-android/.idea/
-android/app/proguard-rules.pro
-android/key.properties
-ios/Flutter/App.framework
-ios/Flutter/Flutter.podspec
-ios/.symlinks/
-ios/Pods/
-ios/.generated/
-macos/.symlinks/
-macos/Pods/
-windows/flutter/
-windows/CMakeLists.txt
-linux/flutter/
-linux/CMakeLists.txt
-web/.dart_tool/
-web/.firebase/
-web/.flutter-plugins
-web/.flutter-plugins-dependencies
-firebase.json
-firebase_options.dart
-firebase_app.js
-firebase-debug.log
-flutter_export_environment.sh
-xcuserdata/
-**/xcuserdata/
-**/xcshareddata/
-**/xcworkspace/
-!ios/Runner.xcodeproj
-!ios/Runner.xcworkspace
-coverage/
 pubspec.lock
