@@ -6,7 +6,7 @@ class PuzzleService {
   final Random _random = Random();
 
   /// **Generate a random puzzle**
-  PuzzleModel generateRandomPuzzle({int size = 5, PuzzleDifficulty difficulty = PuzzleDifficulty.float}) {
+  PuzzleModel generateRandomPuzzle({int size = 5, PuzzleDifficulty difficulty = PuzzleDifficulty.float, int starRating = 0}) {
     // Generate unique puzzle ID
     String puzzleId = DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -32,6 +32,7 @@ class PuzzleService {
       rows: size,
       cols: size,
       difficulty: difficulty,
+      starRating: starRating,
       grid: grid,
       rowClues: rowClues,
       colClues: colClues,

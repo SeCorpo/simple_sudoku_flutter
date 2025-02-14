@@ -11,12 +11,12 @@ class PuzzleTheme {
   );
 
   static const PuzzleTheme dark = PuzzleTheme._(
-    cellSelectedColor: Colors.white,
+    cellSelectedColor: Colors.black,
     cellColor: Colors.grey,
     clueTextColor: Colors.white70,
     gridLineColor: Colors.white38,
-    solutionCorrectColor: Colors.greenAccent,
-    solutionIncorrectColor: Colors.redAccent,
+    solutionCorrectColor: Colors.green,
+    solutionIncorrectColor: Colors.red,
   );
 
   final Color cellSelectedColor;

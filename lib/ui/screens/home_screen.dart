@@ -61,7 +61,18 @@ class HomeScreen extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final puzzle = state.puzzles[index];
                         return ListTile(
-                          title: Text("Puzzle ${index + 1} - ${puzzle.rows} ${StringUtils.capitalize(puzzle.difficulty.name)}"),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Puzzle ${index + 1} - ${puzzle.rows} ${StringUtils.capitalize(puzzle.difficulty.name)}"),
+                              Row(
+                                children: List.generate(
+                                  puzzle.starRating,
+                                      (index) => const Icon(Icons.star, color: Colors.amber, size: 20),
+                                ),
+                              ),
+                            ],
+                          ),
                           trailing: const Icon(Icons.play_arrow),
                           onTap: () {
                             context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: puzzle));

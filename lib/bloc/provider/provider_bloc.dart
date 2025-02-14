@@ -14,12 +14,19 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
     on<SavePuzzle>(_onSavePuzzle);
   }
 
-  /// Load saved puzzles
+  /// Load saved puzzles and sort them by difficulty and star rating
   void _onLoadSavedPuzzles(LoadSavedPuzzles event, Emitter<ProviderState> emit) async {
     emit(LoadingSavedPuzzles());
     final savedPuzzles = await _saveService.loadPuzzles();
 
     if (savedPuzzles.isNotEmpty) {
+      savedPuzzles.sort((a, b) {
+        int difficultyComparison = a.difficulty.index.compareTo(b.difficulty.index);
+        if (difficultyComparison != 0) {
+          return difficultyComparison;
+        }
+        return b.starRating.compareTo(a.starRating);
+      });
       emit(SavedPuzzlesLoaded(puzzles: savedPuzzles));
     } else {
       emit(NoSavedPuzzles());

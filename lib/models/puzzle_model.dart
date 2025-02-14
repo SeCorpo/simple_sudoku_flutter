@@ -9,6 +9,7 @@ class PuzzleModel {
   final int rows;
   final int cols;
   final PuzzleDifficulty difficulty;
+  final int starRating;
   final List<List<CellModel>> grid;
   final List<List<int>> rowClues;
   final List<List<int>> colClues;
@@ -18,6 +19,7 @@ class PuzzleModel {
     required this.rows,
     required this.cols,
     required this.difficulty,
+    required this.starRating,
     required this.grid,
     required this.rowClues,
     required this.colClues,
@@ -32,6 +34,7 @@ class PuzzleModel {
     'rows': rows,
     'cols': cols,
     'difficulty': difficulty.name,
+    'starRating': starRating,
     'grid': grid.map((row) => row.map((cell) => cell.toJson()).toList()).toList(),
     'rowClues': rowClues,
     'colClues': colClues,
@@ -43,6 +46,7 @@ class PuzzleModel {
     rows: json['rows'],
     cols: json['cols'],
     difficulty: _parseDifficulty(json['difficulty']),
+    starRating: json['starRating'],
     grid: (json['grid'] as List)
         .map((row) => (row as List).map((cell) => CellModel.fromJson(cell)).toList())
         .toList(),
@@ -82,6 +86,28 @@ class PuzzleModel {
     return PuzzleDifficulty.values.firstWhere(
           (e) => e.name == difficulty,
       orElse: () => PuzzleDifficulty.float,
+    );
+  }
+
+  PuzzleModel copyWith({
+    String? puzzleId,
+    int? rows,
+    int? cols,
+    PuzzleDifficulty? difficulty,
+    int? starRating,
+    List<List<CellModel>>? grid,
+    List<List<int>>? rowClues,
+    List<List<int>>? colClues,
+  }) {
+    return PuzzleModel(
+      puzzleId: puzzleId ?? this.puzzleId,
+      rows: rows ?? this.rows,
+      cols: cols ?? this.cols,
+      difficulty: difficulty ?? this.difficulty,
+      starRating: starRating ?? this.starRating,
+      grid: grid ?? this.grid,
+      rowClues: rowClues ?? this.rowClues,
+      colClues: colClues ?? this.colClues,
     );
   }
 }

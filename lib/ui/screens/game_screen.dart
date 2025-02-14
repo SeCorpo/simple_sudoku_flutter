@@ -6,6 +6,7 @@ import '../../models/puzzle_model.dart';
 import '../widgets/congratulations_widget.dart';
 import '../widgets/game_grid.dart';
 import '../widgets/clue_numbers_widget.dart';
+import '../widgets/save_puzzle_widget.dart';
 import '../widgets/slider_widget.dart';
 
 class GameScreen extends StatelessWidget {
@@ -72,6 +73,7 @@ class GameScreen extends StatelessWidget {
     double dynamicClueHeight = (gridSize * maxColClueLength).clamp(50, 150);
 
     return Center(
+        child: SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -117,15 +119,11 @@ class GameScreen extends StatelessWidget {
           // Show "You Won!" and Save Button if the game is completed
           if (isWon) ...[
             const CongratulationsWidget(),
-            ElevatedButton(
-              onPressed: () {
-                context.read<ProviderBloc>().add(SavePuzzle(puzzle: puzzle));
-              },
-              child: const Text("Save Puzzle"),
-            ),
+            SavePuzzleWidget(puzzle: puzzle)
           ],
         ],
       ),
+    )
     );
   }
 
@@ -156,6 +154,4 @@ class GameScreen extends StatelessWidget {
       ],
     );
   }
-
-
 }
