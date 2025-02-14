@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/puzzle_model.dart';
+import '../widgets/cell_widget.dart';
 
 class GameGrid extends StatelessWidget {
   final PuzzleModel puzzle;
@@ -25,20 +26,12 @@ class GameGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         int row = index ~/ puzzle.cols;
         int col = index % puzzle.cols;
-        bool isCorrect = puzzle.grid[row][col].isCorrect;
-        bool isFilled = puzzle.grid[row][col].isFilled;
 
-        return GestureDetector(
+        return CellWidget(
+          cell: puzzle.grid[row][col],
+          gridSize: gridSize,
           onTap: () => onCellTap(row, col),
-          child: Container(
-            margin: EdgeInsets.all(1),
-            decoration: BoxDecoration(
-              color: showSolution
-                  ? (isCorrect ? Colors.green.withAlpha(128) : Colors.red.withAlpha(128)) // 50% opacity
-                  : (isFilled ? Colors.black : Colors.white),
-              border: Border.all(color: Colors.grey),
-            ),
-          ),
+          showSolution: showSolution,
         );
       },
     );

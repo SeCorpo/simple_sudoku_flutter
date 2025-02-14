@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import '../../models/cell_model.dart';
+import '../../core/theme/theme.dart';
 
 class CellWidget extends StatelessWidget {
   final CellModel cell;
   final VoidCallback onTap;
   final double gridSize;
+  final bool showSolution;
 
-  const CellWidget({Key? key, required this.cell, required this.onTap, required this.gridSize})
-      : super(key: key);
+  const CellWidget({
+    Key? key,
+    required this.cell,
+    required this.onTap,
+    required this.gridSize,
+    required this.showSolution,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final puzzleTheme = AppTheme.puzzleTheme(context);
+
     return MouseRegion(
-      cursor: SystemMouseCursors.click,
+      cursor: SystemMouseCursors.basic,
       child: GestureDetector(
         onTap: onTap,
         child: AnimatedContainer(
@@ -21,8 +30,10 @@ class CellWidget extends StatelessWidget {
           height: gridSize,
           margin: const EdgeInsets.all(2),
           decoration: BoxDecoration(
-            color: cell.isFilled ? Colors.black : Colors.white,
-            border: Border.all(color: Colors.black),
+            color: showSolution
+                ? (cell.isCorrect ? puzzleTheme.solutionCorrectColor : puzzleTheme.solutionIncorrectColor)
+                : (cell.isFilled ? puzzleTheme.cellSelectedColor : puzzleTheme.cellColor),
+            border: Border.all(color: puzzleTheme.gridLineColor),
           ),
         ),
       ),

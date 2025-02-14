@@ -3,8 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/game/game_bloc.dart';
 import '../../bloc/provider/provider_bloc.dart';
 import '../../models/puzzle_model.dart';
+import '../widgets/congratulations_widget.dart';
 import '../widgets/game_grid.dart';
-import '../widgets/clue_numbers.dart';
+import '../widgets/clue_numbers_widget.dart';
 import '../widgets/slider_widget.dart';
 
 class GameScreen extends StatelessWidget {
@@ -79,7 +80,7 @@ class GameScreen extends StatelessWidget {
             height: dynamicClueHeight,
             child: Padding(
               padding: EdgeInsets.only(left: dynamicClueWidth),
-              child: ClueNumbers(clues: puzzle.colClues, isRow: false, gridSize: gridSize),
+              child: ClueNumbersWidget(clues: puzzle.colClues, isRow: false, gridSize: gridSize),
             ),
           ),
 
@@ -91,7 +92,7 @@ class GameScreen extends StatelessWidget {
               // Left Clue Numbers
               SizedBox(
                 width: dynamicClueWidth,
-                child: ClueNumbers(clues: puzzle.rowClues, isRow: true, gridSize: gridSize),
+                child: ClueNumbersWidget(clues: puzzle.rowClues, isRow: true, gridSize: gridSize),
               ),
 
               // Puzzle Grid
@@ -115,10 +116,7 @@ class GameScreen extends StatelessWidget {
 
           // Show "You Won!" and Save Button if the game is completed
           if (isWon) ...[
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text("🎉 You Won! 🎉", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-            ),
+            const CongratulationsWidget(),
             ElevatedButton(
               onPressed: () {
                 context.read<ProviderBloc>().add(SavePuzzle(puzzle: puzzle));
@@ -133,7 +131,7 @@ class GameScreen extends StatelessWidget {
 
   /// Button to generate a new puzzle with size selection
   Widget _buildNewPuzzleButton(BuildContext context) {
-    int selectedSize = 7;
+    int selectedSize = 5;
 
     return Column(
       children: [

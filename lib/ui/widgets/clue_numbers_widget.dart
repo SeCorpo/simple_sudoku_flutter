@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/theme.dart';
 
-class ClueNumbers extends StatelessWidget {
+class ClueNumbersWidget extends StatelessWidget {
   final List<List<int>> clues;
   final bool isRow;
   final double gridSize;
 
-  const ClueNumbers({Key? key, required this.clues, required this.isRow, required this.gridSize})
+  const ClueNumbersWidget({Key? key, required this.clues, required this.isRow, required this.gridSize})
       : super(key: key);
 
 
   @override
   Widget build(BuildContext context) {
+    final puzzleTheme = AppTheme.puzzleTheme(context);
+
     int maxNumbers = clues.fold(1, (max, clue) => clue.length > max ? clue.length : max);
 
     return isRow
@@ -18,16 +21,16 @@ class ClueNumbers extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(clues.length, (index) {
         return Container(
-          width: gridSize * 2, // Ensure row clues have enough width
-          height: gridSize, // Match row height
+          width: gridSize * 2,
+          height: gridSize,
           alignment: Alignment.centerRight,
           padding: EdgeInsets.symmetric(horizontal: gridSize * 0.2),
           child: FittedBox(
             alignment: Alignment.centerRight,
             child: Text(
-              clues[index].join(" "), // Display grouped numbers inline
+              clues[index].join(" "),
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: gridSize * 0.4, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: gridSize * 0.4, fontWeight: FontWeight.bold, color: puzzleTheme.clueTextColor),
             ),
           ),
         );
@@ -37,18 +40,18 @@ class ClueNumbers extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(clues.length, (index) {
         return Container(
-          width: gridSize, // Ensure column clues have enough width
-          height: gridSize * maxNumbers, // Adjust height dynamically
+          width: gridSize,
+          height: gridSize * maxNumbers,
           alignment: Alignment.bottomCenter,
           padding: EdgeInsets.symmetric(vertical: gridSize * 0.1),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: clues[index]
-                .map((num) => Flexible(
+                .map((clueNumber) => Flexible(
               child: Text(
-                "$num",
+                "$clueNumber",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: gridSize * 0.4, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: gridSize * 0.4, fontWeight: FontWeight.bold, color: puzzleTheme.clueTextColor),
               ),
             ))
                 .toList(),

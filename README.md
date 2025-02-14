@@ -79,3 +79,11 @@ simple_sudoku_flutter/
 │── test/                # Unit and widget tests  
 │   ├── game_test.dart  
 │   ├── ui_test.dart  
+
+
+
+### Theme structure
+- `theme.dart` → Main theme setup (Light & Dark themes)
+- `puzzle_theme.dart` → Puzzle-specific styles
+- `typography.dart` → Centralized text styles
+- `button_styles.dart` → Centralized button styles
