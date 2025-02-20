@@ -42,6 +42,11 @@ class SaveService {
       final file = await _getFile();
       List<PuzzleModel> puzzles = await loadPuzzles();
 
+      if (puzzles.any((p) => p.puzzleId == puzzle.puzzleId)) {
+        print("Puzzle with ID '${puzzle.puzzleId}' already exists. Skipping save.");
+        return;
+      }
+
       puzzles.add(puzzle);
 
       final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());

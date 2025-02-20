@@ -40,6 +40,7 @@ dependencies:
   path_provider: ^2.1.5
   shared_preferences: ^2.5.2
   animate_do: ^4.0.1
+  crypto: ^3.0.6
 
 dev_dependencies:
   flutter_test:

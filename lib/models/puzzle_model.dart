@@ -1,3 +1,4 @@
+import 'package:simple_sudoku_flutter/core/utils/string_utils.dart';
 import 'cell_model.dart';
 
 /// **Puzzle Difficulty Enum**
@@ -13,6 +14,7 @@ class PuzzleModel {
   final List<List<CellModel>> grid;
   final List<List<int>> rowClues;
   final List<List<int>> colClues;
+  final bool completed;
 
   PuzzleModel({
     required this.puzzleId,
@@ -23,10 +25,35 @@ class PuzzleModel {
     required this.grid,
     required this.rowClues,
     required this.colClues,
+    this.completed = false,
   });
 
   /// **Check if puzzle is solved**
   bool isSolved() => grid.every((row) => row.every((cell) => cell.isFilled == cell.isCorrect));
+
+  PuzzleModel copyWith({
+    String? puzzleId,
+    int? rows,
+    int? cols,
+    PuzzleDifficulty? difficulty,
+    int? starRating,
+    List<List<CellModel>>? grid,
+    List<List<int>>? rowClues,
+    List<List<int>>? colClues,
+    bool? completed,
+  }) {
+    return PuzzleModel(
+      puzzleId: puzzleId ?? this.puzzleId,
+      rows: rows ?? this.rows,
+      cols: cols ?? this.cols,
+      difficulty: difficulty ?? this.difficulty,
+      starRating: starRating ?? this.starRating,
+      grid: grid ?? this.grid,
+      rowClues: rowClues ?? this.rowClues,
+      colClues: colClues ?? this.colClues,
+      completed: completed ?? this.completed,
+    );
+  }
 
   /// **Convert to JSON (Excludes user selections)**
   Map<String, dynamic> toJson() => {
@@ -38,6 +65,7 @@ class PuzzleModel {
     'grid': grid.map((row) => row.map((cell) => cell.toJson()).toList()).toList(),
     'rowClues': rowClues,
     'colClues': colClues,
+    'completed': completed,
   };
 
   /// **Load puzzle from JSON (Clears user selections)**
@@ -45,69 +73,17 @@ class PuzzleModel {
     puzzleId: json['puzzleId'],
     rows: json['rows'],
     cols: json['cols'],
-    difficulty: _parseDifficulty(json['difficulty']),
+    difficulty: StringUtils.parseDifficulty(json['difficulty']),
     starRating: json['starRating'],
     grid: (json['grid'] as List)
         .map((row) => (row as List).map((cell) => CellModel.fromJson(cell)).toList())
         .toList(),
     rowClues: (json['rowClues'] as List).map((row) => List<int>.from(row)).toList(),
     colClues: (json['colClues'] as List).map((col) => List<int>.from(col)).toList(),
+    completed: json['completed'] ?? false,
   );
 
-  /// **Generate grouped clues based on the correct solution**
-  static List<List<int>> generateGroupedClues(List<List<CellModel>> grid, {required bool isRow}) {
-    int size = grid.length;
-    return List.generate(size, (i) {
-      List<bool> filledCells = List.generate(size, (j) => (isRow ? grid[i][j] : grid[j][i]).isCorrect);
-      return _groupClueNumbers(filledCells);
-    });
-  }
 
-  /// **Helper: Convert consecutive filled cells into grouped clue numbers**
-  static List<int> _groupClueNumbers(List<bool> cells) {
-    List<int> grouped = [];
-    int count = 0;
 
-    for (bool cell in cells) {
-      if (cell) {
-        count++;
-      } else if (count > 0) {
-        grouped.add(count);
-        count = 0;
-      }
-    }
-    if (count > 0) grouped.add(count);
 
-    return grouped.isEmpty ? [0] : grouped;
-  }
-
-  /// **Helper: Parse Enum from String**
-  static PuzzleDifficulty _parseDifficulty(String difficulty) {
-    return PuzzleDifficulty.values.firstWhere(
-          (e) => e.name == difficulty,
-      orElse: () => PuzzleDifficulty.float,
-    );
-  }
-
-  PuzzleModel copyWith({
-    String? puzzleId,
-    int? rows,
-    int? cols,
-    PuzzleDifficulty? difficulty,
-    int? starRating,
-    List<List<CellModel>>? grid,
-    List<List<int>>? rowClues,
-    List<List<int>>? colClues,
-  }) {
-    return PuzzleModel(
-      puzzleId: puzzleId ?? this.puzzleId,
-      rows: rows ?? this.rows,
-      cols: cols ?? this.cols,
-      difficulty: difficulty ?? this.difficulty,
-      starRating: starRating ?? this.starRating,
-      grid: grid ?? this.grid,
-      rowClues: rowClues ?? this.rowClues,
-      colClues: colClues ?? this.colClues,
-    );
-  }
 }
