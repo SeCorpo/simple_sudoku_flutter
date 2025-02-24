@@ -8,6 +8,7 @@ import '../widgets/game_grid.dart';
 import '../widgets/clue_numbers_widget.dart';
 import '../widgets/save_puzzle_widget.dart';
 import '../widgets/slider_widget.dart';
+import '../widgets/snackbar_widget.dart';
 
 class GameScreen extends StatelessWidget {
   const GameScreen({Key? key}) : super(key: key);
@@ -33,13 +34,9 @@ class GameScreen extends StatelessWidget {
       body: BlocListener<ProviderBloc, ProviderState>(
         listener: (context, state) {
           if (state is PuzzleSaved) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Puzzle saved successfully!")),
-            );
+            SnackBarWidget.show(context, "Puzzle saved successfully!");
           } else if (state is SavePuzzleError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.error)),
-            );
+            SnackBarWidget.show(context, state.error, isError: true);
           }
         },
         child: BlocBuilder<GameBloc, GameState>(

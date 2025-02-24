@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:simple_sudoku_flutter/core/theme/snackbar_styles.dart';
 import 'puzzle_theme.dart';
 import 'typography.dart';
 import 'button_styles.dart';
@@ -12,6 +13,7 @@ class AppTheme {
     elevatedButtonTheme: AppButtonStyles.lightElevatedButtonTheme,
     appBarTheme: _appBarTheme(const Color(0xFF00897B)), // Teal accent
     sliderTheme: _sliderTheme(const Color(0xFF00897B), Colors.grey, const Color(0xFF004D40)),
+    snackBarTheme: AppSnackBarStyles.lightSnackBarTheme,
     cardColor: Colors.white,
     primaryColor: const Color(0xFF00897B),
     secondaryHeaderColor: const Color(0xFFD7FFF1), // Soft pastel green
@@ -25,6 +27,7 @@ class AppTheme {
     elevatedButtonTheme: AppButtonStyles.darkElevatedButtonTheme,
     appBarTheme: _appBarTheme(const Color(0xFF1B263B)), // Darkened ocean blue
     sliderTheme: _sliderTheme(const Color(0xFF415A77), Colors.grey, const Color(0xFF89CFF0)),
+    snackBarTheme: AppSnackBarStyles.darkSnackBarTheme,
     cardColor: const Color(0xFF1B263B),
     primaryColor: const Color(0xFF415A77),
     secondaryHeaderColor: const Color(0xFF89CFF0), // Sky blue accent
