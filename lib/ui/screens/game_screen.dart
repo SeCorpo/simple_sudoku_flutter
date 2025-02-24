@@ -45,7 +45,7 @@ class GameScreen extends StatelessWidget {
         child: BlocBuilder<GameBloc, GameState>(
           builder: (context, state) {
             if (state is GameInitial) {
-              return _buildInitialScreen(context);
+              return _buildInitialScreen(context, state.defaultPuzzleSize);
             } else if (state is GameLoaded) {
               return _buildGameUI(context, state.puzzle, state.showSolution);
             } else if (state is GameWon) {
@@ -60,8 +60,8 @@ class GameScreen extends StatelessWidget {
   }
 
   /// Show "New Puzzle" button when no puzzle is loaded (fail-safe feature)
-  Widget _buildInitialScreen(BuildContext context) {
-    return _buildNewPuzzleButton(context);
+  Widget _buildInitialScreen(BuildContext context, int defaultPuzzleSize) {
+    return _buildNewPuzzleButton(context, defaultPuzzleSize);
   }
 
   Widget _buildGameUI(BuildContext context, PuzzleModel puzzle, bool showSolution, {bool isWon = false}) {
@@ -114,7 +114,7 @@ class GameScreen extends StatelessWidget {
           const SizedBox(height: 10),
 
           // "New Puzzle" Button
-          _buildNewPuzzleButton(context),
+          _buildNewPuzzleButton(context, puzzle.cols),
 
           // Show "You Won!" and Save Button if the game is completed
           if (isWon) ...[
@@ -128,8 +128,8 @@ class GameScreen extends StatelessWidget {
   }
 
   /// Button to generate a new puzzle with size selection
-  Widget _buildNewPuzzleButton(BuildContext context) {
-    int selectedSize = 5;
+  Widget _buildNewPuzzleButton(BuildContext context, int puzzleSize) {
+    int selectedSize = puzzleSize;
 
     return Column(
       children: [

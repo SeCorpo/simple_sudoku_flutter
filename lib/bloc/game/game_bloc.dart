@@ -9,7 +9,7 @@ part 'game_state.dart';
 class GameBloc extends Bloc<GameEvent, GameState> {
   final PuzzleService _puzzleService;
 
-  GameBloc(this._puzzleService) : super(GameInitial()) {
+  GameBloc(this._puzzleService) : super(GameInitial(defaultPuzzleSize: 5)) {
     on<GenerateNewPuzzle>(_onGenerateNewPuzzle);
     on<StartGameWithPuzzle>(_onStartGameWithPuzzle);
     on<ToggleSolution>(_onToggleSolution);

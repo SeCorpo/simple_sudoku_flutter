@@ -3,7 +3,11 @@ part of 'game_bloc.dart';
 @immutable
 sealed class GameState {}
 
-class GameInitial extends GameState {}
+class GameInitial extends GameState {
+  final int defaultPuzzleSize;
+
+  GameInitial({required this.defaultPuzzleSize});
+}
 
 class GameLoaded extends GameState {
   final PuzzleModel puzzle;
