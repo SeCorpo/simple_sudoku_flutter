@@ -8,13 +8,13 @@ class SliderWidget extends StatelessWidget {
   final ValueChanged<int> onChanged;
 
   const SliderWidget({
-    Key? key,
+    super.key,
     required this.min,
     required this.max,
     required this.divisions,
     required this.initialValue,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

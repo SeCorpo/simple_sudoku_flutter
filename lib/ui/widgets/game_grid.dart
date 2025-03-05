@@ -9,12 +9,12 @@ class GameGrid extends StatelessWidget {
   final bool showSolution;
 
   const GameGrid({
-    Key? key,
+    super.key,
     required this.puzzle,
     required this.onCellTap,
     required this.gridSize,
     required this.showSolution,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

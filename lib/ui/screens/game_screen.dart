@@ -11,7 +11,7 @@ import '../widgets/slider_widget.dart';
 import '../widgets/snackbar_widget.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({Key? key}) : super(key: key);
+  const GameScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

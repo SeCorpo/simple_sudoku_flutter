@@ -6,8 +6,7 @@ class ClueNumbersWidget extends StatelessWidget {
   final bool isRow;
   final double gridSize;
 
-  const ClueNumbersWidget({Key? key, required this.clues, required this.isRow, required this.gridSize})
-      : super(key: key);
+  const ClueNumbersWidget({super.key, required this.clues, required this.isRow, required this.gridSize});
 
 
   @override

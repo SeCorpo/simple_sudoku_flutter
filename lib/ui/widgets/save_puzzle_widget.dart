@@ -6,7 +6,7 @@ import '../../models/puzzle_model.dart';
 class SavePuzzleWidget extends StatelessWidget {
   final PuzzleModel puzzle;
 
-  const SavePuzzleWidget({Key? key, required this.puzzle}) : super(key: key);
+  const SavePuzzleWidget({super.key, required this.puzzle});
 
   @override
   Widget build(BuildContext context) {

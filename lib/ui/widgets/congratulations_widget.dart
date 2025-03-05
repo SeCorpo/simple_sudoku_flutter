@@ -25,7 +25,7 @@ class CongratulationsWidget extends StatelessWidget {
 
   final String message;
 
-  const CongratulationsWidget({Key? key, this.message = ""}) : super(key: key);
+  const CongratulationsWidget({super.key, this.message = ""});
 
   @override
   Widget build(BuildContext context) {

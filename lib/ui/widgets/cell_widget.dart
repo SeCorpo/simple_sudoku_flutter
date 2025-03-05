@@ -9,12 +9,12 @@ class CellWidget extends StatelessWidget {
   final bool showSolution;
 
   const CellWidget({
-    Key? key,
+    super.key,
     required this.cell,
     required this.onTap,
     required this.gridSize,
     required this.showSolution,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

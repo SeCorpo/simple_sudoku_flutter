@@ -6,7 +6,7 @@ import '../../core/theme/button_styles.dart';
 import '../widgets/confirmation_dialog_widget.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
