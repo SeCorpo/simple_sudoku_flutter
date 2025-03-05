@@ -17,4 +17,7 @@ class MarkPuzzleCompleted extends ProviderEvent {
 
 class ResetProgress extends ProviderEvent {}
 
-class GetNextUncompletedPuzzle extends ProviderEvent {}
+class GetNextUncompletedPuzzle extends ProviderEvent {
+  final bool fromHome;  // True if triggered from HomeScreen
+  GetNextUncompletedPuzzle({required this.fromHome});
+}

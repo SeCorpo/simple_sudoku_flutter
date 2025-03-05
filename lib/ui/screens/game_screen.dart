@@ -39,13 +39,10 @@ class GameScreen extends StatelessWidget {
             SnackBarWidget.show(context, state.error, isError: true);
           } else if (state is MarkPuzzleCompletedError) {
             SnackBarWidget.show(context, state.error, isError: true);
-          } else if (state is NextPuzzle) {
-            // Since this State is also used in HomeScreen
-            if (ModalRoute.of(context)?.isCurrent == true) {
-              context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: state.puzzle));
-              context.read<ProviderBloc>().add(LoadSavedPuzzles());
-            }
-          } else if (state is NextPuzzleNotFoundError) {
+          } else if (state is NextPuzzleFromGame) {
+            context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: state.puzzle));
+            context.read<ProviderBloc>().add(LoadSavedPuzzles());
+          } else if (state is NextPuzzleNotFoundError && !state.fromHome) {
             SnackBarWidget.show(context, state.error, isError: true);
           }
         },
@@ -172,7 +169,7 @@ class GameScreen extends StatelessWidget {
   Widget _buildNextPuzzleButton(BuildContext context) {
     return ElevatedButton(
       onPressed: () {
-        context.read<ProviderBloc>().add(GetNextUncompletedPuzzle());
+        context.read<ProviderBloc>().add(GetNextUncompletedPuzzle(fromHome: false));
       },
       child: const Text("Next Puzzle"),
     );

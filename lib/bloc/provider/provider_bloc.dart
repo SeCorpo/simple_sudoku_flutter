@@ -73,10 +73,19 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
   /// Get the next uncompleted puzzle from the sorted list
   void _onGetNextUncompletedPuzzle(GetNextUncompletedPuzzle event, Emitter<ProviderState> emit) async {
     try {
-      final nextPuzzle = _puzzles.firstWhere((puzzle) => !puzzle.completed, orElse: () => throw Exception("No uncompleted puzzles found"));
-      emit(NextPuzzle(puzzle: nextPuzzle));
+      final nextPuzzle = _puzzles.firstWhere(
+            (puzzle) => !puzzle.completed,
+        orElse: () => throw Exception("No uncompleted puzzles found"),
+      );
+
+      if (event.fromHome) {
+        emit(NextPuzzleFromHome(puzzle: nextPuzzle));
+      } else {
+        emit(NextPuzzleFromGame(puzzle: nextPuzzle));
+      }
     } catch (e) {
-      emit(NextPuzzleNotFoundError(error: e.toString()));
+      emit(NextPuzzleNotFoundError(error: e.toString(), fromHome: event.fromHome));
     }
   }
+
 }

@@ -26,12 +26,21 @@ class MarkPuzzleCompletedError extends ProviderState {
   MarkPuzzleCompletedError({required this.error});
 }
 
-class NextPuzzle extends ProviderState {
+/// State for when Next Puzzle is fetched from HomeScreen
+class NextPuzzleFromHome extends ProviderState {
   final PuzzleModel puzzle;
-  NextPuzzle({required this.puzzle});
+  NextPuzzleFromHome({required this.puzzle});
+}
+
+/// State for when Next Puzzle is fetched from GameScreen
+class NextPuzzleFromGame extends ProviderState {
+  final PuzzleModel puzzle;
+  NextPuzzleFromGame({required this.puzzle});
 }
 
 class NextPuzzleNotFoundError extends ProviderState {
   final String error;
-  NextPuzzleNotFoundError({required this.error});
+  final bool fromHome;  // True if error originated from HomeScreen
+
+  NextPuzzleNotFoundError({required this.error, required this.fromHome});
 }

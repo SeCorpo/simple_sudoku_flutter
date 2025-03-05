@@ -49,23 +49,21 @@ class HomeScreen extends StatelessWidget {
 
             BlocListener<ProviderBloc, ProviderState>(
               listener: (context, state) {
-                if (state is NextPuzzle) {
-                  // Since this State is also used in GameScreen
-                  if (ModalRoute.of(context)?.isCurrent == true) {
-                    context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: state.puzzle));
-                    context.read<ProviderBloc>().add(LoadSavedPuzzles());
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const GameScreen()),
-                    );
-                  }
-                } else if (state is NextPuzzleNotFoundError) {
+                if (state is NextPuzzleFromHome) {
+                  context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: state.puzzle));
+                  context.read<ProviderBloc>().add(LoadSavedPuzzles());
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const GameScreen()),
+                  );
+                } else if (state is NextPuzzleNotFoundError && state.fromHome) {
                   SnackBarWidget.show(context, state.error, isError: true);
                 }
               },
               child: ElevatedButton(
                 onPressed: () {
-                  context.read<ProviderBloc>().add(GetNextUncompletedPuzzle());
+                  context.read<ProviderBloc>().add(GetNextUncompletedPuzzle(fromHome: true));
                 },
                 child: const Text("Next Puzzle"),
               ),
