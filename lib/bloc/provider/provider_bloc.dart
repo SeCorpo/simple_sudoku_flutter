@@ -8,12 +8,14 @@ part 'provider_state.dart';
 
 class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
   final SaveService _saveService;
+  List<PuzzleModel> _puzzles = [];
 
   ProviderBloc(this._saveService) : super(ProviderInitial()) {
     on<LoadSavedPuzzles>(_onLoadSavedPuzzles);
     on<SavePuzzle>(_onSavePuzzle);
     on<MarkPuzzleCompleted>(_onMarkPuzzleCompleted);
     on<ResetProgress>(_onResetProgress);
+    on<GetNextUncompletedPuzzle>(_onGetNextUncompletedPuzzle);
   }
 
   /// Load saved puzzles and sort them by difficulty and star rating
@@ -29,8 +31,10 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
         }
         return a.starRating.compareTo(b.starRating);
       });
-      emit(SavedPuzzlesLoaded(puzzles: savedPuzzles));
+      _puzzles = savedPuzzles;
+      emit(SavedPuzzlesLoaded(puzzles: _puzzles));
     } else {
+      _puzzles = [];
       emit(NoSavedPuzzles());
     }
   }
@@ -63,6 +67,16 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       add(LoadSavedPuzzles());
     } catch (e) {
       emit(SavePuzzleError(error: "Failed to reset progress: $e"));
+    }
+  }
+
+  /// Get the next uncompleted puzzle from the sorted list
+  void _onGetNextUncompletedPuzzle(GetNextUncompletedPuzzle event, Emitter<ProviderState> emit) async {
+    try {
+      final nextPuzzle = _puzzles.firstWhere((puzzle) => !puzzle.completed, orElse: () => throw Exception("No uncompleted puzzles found"));
+      emit(NextPuzzle(puzzle: nextPuzzle));
+    } catch (e) {
+      emit(NextPuzzleNotFoundError(error: e.toString()));
     }
   }
 }

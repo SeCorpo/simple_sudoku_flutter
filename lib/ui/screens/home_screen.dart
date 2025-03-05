@@ -4,6 +4,7 @@ import 'package:simple_sudoku_flutter/core/utils/string_utils.dart';
 import 'package:simple_sudoku_flutter/ui/screens/settings_screen.dart';
 import '../../bloc/game/game_bloc.dart';
 import '../../bloc/provider/provider_bloc.dart';
+import '../widgets/snackbar_widget.dart';
 import 'game_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -43,6 +44,31 @@ class HomeScreen extends StatelessWidget {
                 );
               },
               child: const Text("Generate New Puzzle"),
+            ),
+            const SizedBox(height: 20),
+
+            BlocListener<ProviderBloc, ProviderState>(
+              listener: (context, state) {
+                if (state is NextPuzzle) {
+                  // Since this State is also used in GameScreen
+                  if (ModalRoute.of(context)?.isCurrent == true) {
+                    context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: state.puzzle));
+                    context.read<ProviderBloc>().add(LoadSavedPuzzles());
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const GameScreen()),
+                    );
+                  }
+                } else if (state is NextPuzzleNotFoundError) {
+                  SnackBarWidget.show(context, state.error, isError: true);
+                }
+              },
+              child: ElevatedButton(
+                onPressed: () {
+                  context.read<ProviderBloc>().add(GetNextUncompletedPuzzle());
+                },
+                child: const Text("Next Puzzle"),
+              ),
             ),
             const SizedBox(height: 20),
 

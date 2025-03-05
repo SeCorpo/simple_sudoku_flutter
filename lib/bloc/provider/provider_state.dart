@@ -25,3 +25,13 @@ class MarkPuzzleCompletedError extends ProviderState {
   final String error;
   MarkPuzzleCompletedError({required this.error});
 }
+
+class NextPuzzle extends ProviderState {
+  final PuzzleModel puzzle;
+  NextPuzzle({required this.puzzle});
+}
+
+class NextPuzzleNotFoundError extends ProviderState {
+  final String error;
+  NextPuzzleNotFoundError({required this.error});
+}

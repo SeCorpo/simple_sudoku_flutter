@@ -39,6 +39,14 @@ class GameScreen extends StatelessWidget {
             SnackBarWidget.show(context, state.error, isError: true);
           } else if (state is MarkPuzzleCompletedError) {
             SnackBarWidget.show(context, state.error, isError: true);
+          } else if (state is NextPuzzle) {
+            // Since this State is also used in HomeScreen
+            if (ModalRoute.of(context)?.isCurrent == true) {
+              context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: state.puzzle));
+              context.read<ProviderBloc>().add(LoadSavedPuzzles());
+            }
+          } else if (state is NextPuzzleNotFoundError) {
+            SnackBarWidget.show(context, state.error, isError: true);
           }
         },
         child: BlocBuilder<GameBloc, GameState>(
@@ -118,9 +126,12 @@ class GameScreen extends StatelessWidget {
 
           // "New Puzzle" Button
           _buildNewPuzzleButton(context, puzzle.cols),
+          const SizedBox(height: 10),
 
           // Show "You Won!" and Save Button if the game is completed
           if (isWon) ...[
+            _buildNextPuzzleButton(context),
+            const SizedBox(height: 10),
             const CongratulationsWidget(),
             SavePuzzleWidget(puzzle: puzzle)
           ],
@@ -152,9 +163,18 @@ class GameScreen extends StatelessWidget {
           onPressed: () {
             context.read<GameBloc>().add(GenerateNewPuzzle(size: selectedSize));
           },
-          child: const Text("New Puzzle"),
+          child: const Text("Generate New Puzzle"),
         ),
       ],
+    );
+  }
+  /// "Next Puzzle" button that triggers fetching of the next uncompleted puzzle
+  Widget _buildNextPuzzleButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        context.read<ProviderBloc>().add(GetNextUncompletedPuzzle());
+      },
+      child: const Text("Next Puzzle"),
     );
   }
 }

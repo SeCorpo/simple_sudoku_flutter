@@ -16,3 +16,5 @@ class MarkPuzzleCompleted extends ProviderEvent {
 }
 
 class ResetProgress extends ProviderEvent {}
+
+class GetNextUncompletedPuzzle extends ProviderEvent {}
