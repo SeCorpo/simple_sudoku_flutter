@@ -14,6 +14,7 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     on<StartGameWithPuzzle>(_onStartGameWithPuzzle);
     on<ToggleSolution>(_onToggleSolution);
     on<ToggleCell>(_onToggleCell);
+    on<GameWonEvent>(_onGameWon);
   }
 
   void _onGenerateNewPuzzle(GenerateNewPuzzle event, Emitter<GameState> emit) {
@@ -38,10 +39,13 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       currentState.puzzle.grid[event.row][event.col].toggle();
 
       if (currentState.puzzle.isSolved()) {
-        emit(GameWon(puzzle: currentState.puzzle));
+        add(GameWonEvent(puzzle: currentState.puzzle));
       } else {
         emit(GameLoaded(puzzle: currentState.puzzle, showSolution: currentState.showSolution));
       }
     }
+  }
+  void _onGameWon(GameWonEvent event, Emitter<GameState> emit) {
+    emit(GameWon(puzzle: event.puzzle));
   }
 }

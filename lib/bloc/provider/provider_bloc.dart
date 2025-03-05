@@ -12,6 +12,8 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
   ProviderBloc(this._saveService) : super(ProviderInitial()) {
     on<LoadSavedPuzzles>(_onLoadSavedPuzzles);
     on<SavePuzzle>(_onSavePuzzle);
+    on<MarkPuzzleCompleted>(_onMarkPuzzleCompleted);
+    on<ResetProgress>(_onResetProgress);
   }
 
   /// Load saved puzzles and sort them by difficulty and star rating
@@ -43,6 +45,24 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       add(LoadSavedPuzzles());
     } catch (e) {
       emit(SavePuzzleError(error: "Failed to save puzzle: $e"));
+    }
+  }
+
+  void _onMarkPuzzleCompleted(MarkPuzzleCompleted event, Emitter<ProviderState> emit) async {
+    try {
+      await _saveService.markPuzzleAsCompleted(event.puzzleId);
+      add(LoadSavedPuzzles());
+    } catch (e) {
+      emit(MarkPuzzleCompletedError(error: "Failed to mark puzzle as completed: $e"));
+    }
+  }
+
+  void _onResetProgress(ResetProgress event, Emitter<ProviderState> emit) async {
+    try {
+      await _saveService.resetProgress();
+      add(LoadSavedPuzzles());
+    } catch (e) {
+      emit(SavePuzzleError(error: "Failed to reset progress: $e"));
     }
   }
 }

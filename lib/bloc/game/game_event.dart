@@ -20,3 +20,9 @@ class ToggleCell extends GameEvent {
   final int col;
   ToggleCell({required this.row, required this.col});
 }
+
+class GameWonEvent extends GameEvent {
+  final PuzzleModel puzzle;
+
+  GameWonEvent({required this.puzzle});
+}

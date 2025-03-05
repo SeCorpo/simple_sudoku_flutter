@@ -18,4 +18,11 @@ class AppButtonStyles {
       shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
     ),
   );
+
+  static final ButtonStyle redButtonStyle = ButtonStyle(
+    backgroundColor: const WidgetStatePropertyAll(Colors.redAccent),
+    foregroundColor: const WidgetStatePropertyAll(Colors.white),
+    padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 20, vertical: 12)),
+    shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+  );
 }

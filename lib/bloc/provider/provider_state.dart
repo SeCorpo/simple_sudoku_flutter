@@ -20,3 +20,8 @@ class SavePuzzleError extends ProviderState {
   final String error;
   SavePuzzleError({required this.error});
 }
+
+class MarkPuzzleCompletedError extends ProviderState {
+  final String error;
+  MarkPuzzleCompletedError({required this.error});
+}

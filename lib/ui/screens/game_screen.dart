@@ -37,6 +37,8 @@ class GameScreen extends StatelessWidget {
             SnackBarWidget.show(context, "Puzzle saved successfully!");
           } else if (state is SavePuzzleError) {
             SnackBarWidget.show(context, state.error, isError: true);
+          } else if (state is MarkPuzzleCompletedError) {
+            SnackBarWidget.show(context, state.error, isError: true);
           }
         },
         child: BlocBuilder<GameBloc, GameState>(
@@ -46,6 +48,10 @@ class GameScreen extends StatelessWidget {
             } else if (state is GameLoaded) {
               return _buildGameUI(context, state.puzzle, state.showSolution);
             } else if (state is GameWon) {
+              if(!state.puzzle.completed) {
+                context.read<ProviderBloc>().add(
+                    MarkPuzzleCompleted(puzzleId: state.puzzle.puzzleId));
+              }
               return _buildGameUI(context, state.puzzle, false, isWon: true);
             } else {
               return const Center(child: Text("Unknown state"));

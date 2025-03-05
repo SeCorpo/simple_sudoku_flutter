@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../bloc/provider/provider_bloc.dart';
 import '../../bloc/theme/theme_bloc.dart';
+import '../../core/theme/button_styles.dart';
+import '../widgets/confirmation_dialog_widget.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -44,6 +47,34 @@ class SettingsScreen extends StatelessWidget {
                   ],
                 );
               },
+            ),
+
+            const SizedBox(height: 20),
+            const Divider(),
+            const SizedBox(height: 20),
+
+            // Reset Progress Button
+            const Text("Game Progress", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+
+            ElevatedButton(
+              style: AppButtonStyles.redButtonStyle,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => ConfirmationDialogWidget(
+                    title: "Reset Progress",
+                    content: "Are you sure you want to reset all progress? This action cannot be undone.",
+                    onConfirm: () {
+                      context.read<ProviderBloc>().add(ResetProgress());
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Progress has been reset!")),
+                      );
+                    },
+                  ),
+                );
+              },
+              child: const Text("Reset Progress"),
             ),
           ],
         ),

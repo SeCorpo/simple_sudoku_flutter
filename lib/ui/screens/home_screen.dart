@@ -66,10 +66,17 @@ class HomeScreen extends StatelessWidget {
                             children: [
                               Text("Puzzle ${index + 1} - ${puzzle.rows} ${StringUtils.capitalize(puzzle.difficulty.name)}"),
                               Row(
-                                children: List.generate(
-                                  puzzle.starRating,
-                                      (index) => const Icon(Icons.star, color: Colors.amber, size: 20),
-                                ),
+                                children: [
+                                  ...List.generate(
+                                    puzzle.starRating,
+                                        (index) => const Icon(Icons.star, color: Colors.amber, size: 20),
+                                  ),
+                                  if (puzzle.completed)
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 8),
+                                      child: Icon(Icons.check_circle, color: Colors.green, size: 22),
+                                    ),
+                                ],
                               ),
                             ],
                           ),

@@ -56,6 +56,49 @@ class SaveService {
     }
   }
 
+  /// Mark a puzzle as completed
+  Future<void> markPuzzleAsCompleted(String puzzleId) async {
+    try {
+      final file = await _getFile();
+      List<PuzzleModel> puzzles = await loadPuzzles();
+
+      bool updated = false;
+
+      puzzles = puzzles.map((puzzle) {
+        if (puzzle.puzzleId == puzzleId && !puzzle.completed) {
+          updated = true;
+          return puzzle.copyWith(completed: true);
+        }
+        return puzzle;
+      }).toList();
+
+      if (updated) {
+        final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
+        await file.writeAsString(jsonString);
+      } else {
+        print("Puzzle with ID '$puzzleId' not found or already completed.");
+      }
+    } catch (e) {
+      print("Error marking puzzle as completed: $e");
+    }
+  }
+
+  /// Reset all puzzles' completion status to false
+  Future<void> resetProgress() async {
+    try {
+      final file = await _getFile();
+      List<PuzzleModel> puzzles = await loadPuzzles();
+
+      puzzles = puzzles.map((puzzle) => puzzle.copyWith(completed: false)).toList();
+
+      final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
+      await file.writeAsString(jsonString);
+    } catch (e) {
+      print("Error resetting progress: $e");
+    }
+  }
+
+
   /// Clear saved puzzles (for debugging)
   Future<void> clearSavedPuzzles() async {
     try {
