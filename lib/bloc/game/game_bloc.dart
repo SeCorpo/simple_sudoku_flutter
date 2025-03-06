@@ -15,21 +15,25 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     on<ToggleSolution>(_onToggleSolution);
     on<ToggleCell>(_onToggleCell);
     on<GameWonEvent>(_onGameWon);
+    on<ToggleCluesSolution>(_onToggleCluesSolution);
   }
 
   void _onGenerateNewPuzzle(GenerateNewPuzzle event, Emitter<GameState> emit) {
     final puzzle = _puzzleService.generateRandomPuzzle(size: event.size);
-    emit(GameLoaded(puzzle: puzzle, showSolution: false));
+    emit(GameLoaded(puzzle: puzzle, showSolution: false, showCluesSolution: false));
   }
 
   void _onStartGameWithPuzzle(StartGameWithPuzzle event, Emitter<GameState> emit) {
-    emit(GameLoaded(puzzle: event.puzzle, showSolution: false));
+    emit(GameLoaded(puzzle: event.puzzle, showSolution: false, showCluesSolution: false));
   }
 
   void _onToggleSolution(ToggleSolution event, Emitter<GameState> emit) {
     if (state is GameLoaded) {
       final currentState = state as GameLoaded;
-      emit(GameLoaded(puzzle: currentState.puzzle, showSolution: !currentState.showSolution));
+      emit(GameLoaded(
+          puzzle: currentState.puzzle,
+          showSolution: !currentState.showSolution,
+          showCluesSolution: currentState.showCluesSolution));
     }
   }
 
@@ -41,11 +45,25 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       if (currentState.puzzle.isSolved()) {
         add(GameWonEvent(puzzle: currentState.puzzle));
       } else {
-        emit(GameLoaded(puzzle: currentState.puzzle, showSolution: currentState.showSolution));
+        emit(GameLoaded(
+          puzzle: currentState.puzzle,
+          showSolution: currentState.showSolution,
+          showCluesSolution: currentState.showCluesSolution,));
       }
     }
   }
   void _onGameWon(GameWonEvent event, Emitter<GameState> emit) {
     emit(GameWon(puzzle: event.puzzle));
+  }
+
+  void _onToggleCluesSolution(ToggleCluesSolution event, Emitter<GameState> emit) {
+    if (state is GameLoaded) {
+      final currentState = state as GameLoaded;
+      emit(GameLoaded(
+        puzzle: currentState.puzzle,
+        showSolution: currentState.showSolution,
+        showCluesSolution: !currentState.showCluesSolution,
+      ));
+    }
   }
 }

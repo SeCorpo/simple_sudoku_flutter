@@ -8,6 +8,7 @@ class PuzzleTheme {
     gridLineColor: Colors.black54,
     solutionCorrectColor: Colors.green,
     solutionIncorrectColor: Colors.red,
+    solvedClueColor: Colors.green,
   );
 
   static const PuzzleTheme dark = PuzzleTheme._(
@@ -17,6 +18,7 @@ class PuzzleTheme {
     gridLineColor: Colors.white38,
     solutionCorrectColor: Colors.green,
     solutionIncorrectColor: Colors.red,
+    solvedClueColor: Colors.green,
   );
 
   final Color cellSelectedColor;
@@ -25,6 +27,7 @@ class PuzzleTheme {
   final Color gridLineColor;
   final Color solutionCorrectColor;
   final Color solutionIncorrectColor;
+  final Color solvedClueColor;
 
   const PuzzleTheme._({
     required this.cellSelectedColor,
@@ -33,5 +36,6 @@ class PuzzleTheme {
     required this.gridLineColor,
     required this.solutionCorrectColor,
     required this.solutionIncorrectColor,
+    required this.solvedClueColor,
   });
 }

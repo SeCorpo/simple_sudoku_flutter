@@ -5,9 +5,17 @@ class ClueNumbersWidget extends StatelessWidget {
   final List<List<int>> clues;
   final bool isRow;
   final double gridSize;
+  final List<bool> solved;
+  final bool useSolvedColor;
 
-  const ClueNumbersWidget({super.key, required this.clues, required this.isRow, required this.gridSize});
-
+  const ClueNumbersWidget({
+    super.key,
+    required this.clues,
+    required this.isRow,
+    required this.gridSize,
+    required this.solved,
+    required this.useSolvedColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +27,10 @@ class ClueNumbersWidget extends StatelessWidget {
         ? Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(clues.length, (index) {
+        Color textColor = (solved[index] && useSolvedColor)
+            ? puzzleTheme.solvedClueColor
+            : puzzleTheme.clueTextColor;
+
         return Container(
           width: gridSize * 2,
           height: gridSize,
@@ -29,7 +41,11 @@ class ClueNumbersWidget extends StatelessWidget {
             child: Text(
               clues[index].join(" "),
               textAlign: TextAlign.right,
-              style: TextStyle(fontSize: gridSize * 0.4, fontWeight: FontWeight.bold, color: puzzleTheme.clueTextColor),
+              style: TextStyle(
+                fontSize: gridSize * 0.4,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
             ),
           ),
         );
@@ -38,6 +54,10 @@ class ClueNumbersWidget extends StatelessWidget {
         : Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(clues.length, (index) {
+        Color textColor = (solved[index] && useSolvedColor)
+            ? puzzleTheme.solvedClueColor
+            : puzzleTheme.clueTextColor;
+
         return Container(
           width: gridSize,
           height: gridSize * maxNumbers,
@@ -50,7 +70,11 @@ class ClueNumbersWidget extends StatelessWidget {
               child: Text(
                 "$clueNumber",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: gridSize * 0.4, fontWeight: FontWeight.bold, color: puzzleTheme.clueTextColor),
+                style: TextStyle(
+                  fontSize: gridSize * 0.4,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
               ),
             ))
                 .toList(),

@@ -26,3 +26,5 @@ class GameWonEvent extends GameEvent {
 
   GameWonEvent({required this.puzzle});
 }
+
+class ToggleCluesSolution extends GameEvent {}

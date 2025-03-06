@@ -29,7 +29,19 @@ class PuzzleModel {
   });
 
   /// **Check if puzzle is solved**
-  bool isSolved() => grid.every((row) => row.every((cell) => cell.isFilled == cell.isCorrect));
+  bool isSolved() => grid.every(
+          (row) => row.every((cell) => cell.isFilled == cell.isCorrect));
+
+  /// **Check if a specific row is solved**
+  bool isRowSolved(int row) {
+    return grid[row].every((cell) => cell.isFilled == cell.isCorrect);
+  }
+
+  /// **Check if a specific column is solved**
+  bool isColumnSolved(int col) {
+    return List.generate(rows, (row) => grid[row][col])
+        .every((cell) => cell.isFilled == cell.isCorrect);
+  }
 
   PuzzleModel copyWith({
     String? puzzleId,
@@ -82,8 +94,4 @@ class PuzzleModel {
     colClues: (json['colClues'] as List).map((col) => List<int>.from(col)).toList(),
     completed: json['completed'] ?? false,
   );
-
-
-
-
 }

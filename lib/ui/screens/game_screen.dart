@@ -21,16 +21,31 @@ class GameScreen extends StatelessWidget {
         actions: [
           BlocBuilder<GameBloc, GameState>(
             builder: (context, state) {
-              bool showSolution = (state is GameLoaded) ? state.showSolution : false;
-              return IconButton(
-                icon: Icon(showSolution ? Icons.visibility_off : Icons.visibility),
-                onPressed: () => context.read<GameBloc>().add(ToggleSolution()),
-                tooltip: showSolution ? "Hide Solution" : "Show Solution",
-              );
+              if (state is GameLoaded) {
+                bool showSolution = state.showSolution;
+                bool showCluesSolution = state.showCluesSolution;
+
+                return Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(showSolution ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () => context.read<GameBloc>().add(ToggleSolution()),
+                      tooltip: showSolution ? "Hide Solution" : "Show Solution",
+                    ),
+                    IconButton(
+                      icon: Icon(showCluesSolution ? Icons.check_box : Icons.check_box_outline_blank),
+                      onPressed: () => context.read<GameBloc>().add(ToggleCluesSolution()),
+                      tooltip: showCluesSolution ? "Hide Clue Solution" : "Show Clue Solution",
+                    ),
+                  ],
+                );
+              }
+              return const SizedBox.shrink();
             },
           ),
         ],
       ),
+
       body: BlocListener<ProviderBloc, ProviderState>(
         listener: (context, state) {
           if (state is PuzzleSaved) {
@@ -51,13 +66,13 @@ class GameScreen extends StatelessWidget {
             if (state is GameInitial) {
               return _buildInitialScreen(context, state.defaultPuzzleSize);
             } else if (state is GameLoaded) {
-              return _buildGameUI(context, state.puzzle, state.showSolution);
+              return _buildGameUI(context, state.puzzle, state.showSolution, state.showCluesSolution);
             } else if (state is GameWon) {
               if(!state.puzzle.completed) {
                 context.read<ProviderBloc>().add(
                     MarkPuzzleCompleted(puzzleId: state.puzzle.puzzleId));
               }
-              return _buildGameUI(context, state.puzzle, false, isWon: true);
+              return _buildGameUI(context, state.puzzle, false, false, isWon: true);
             } else {
               return const Center(child: Text("Unknown state"));
             }
@@ -72,7 +87,7 @@ class GameScreen extends StatelessWidget {
     return _buildNewPuzzleButton(context, defaultPuzzleSize);
   }
 
-  Widget _buildGameUI(BuildContext context, PuzzleModel puzzle, bool showSolution, {bool isWon = false}) {
+  Widget _buildGameUI(BuildContext context, PuzzleModel puzzle, bool showSolution, bool showCluesSolution, {bool isWon = false}) {
     double gridSize = MediaQuery.of(context).size.width < 600 ? 30 : 40;
     int maxRowClueLength = puzzle.rowClues.fold(1, (max, clue) => clue.length > max ? clue.length : max);
     int maxColClueLength = puzzle.colClues.fold(1, (max, clue) => clue.length > max ? clue.length : max);
@@ -90,7 +105,13 @@ class GameScreen extends StatelessWidget {
             height: dynamicClueHeight,
             child: Padding(
               padding: EdgeInsets.only(left: dynamicClueWidth),
-              child: ClueNumbersWidget(clues: puzzle.colClues, isRow: false, gridSize: gridSize),
+              child: ClueNumbersWidget(
+                clues: puzzle.colClues,
+                isRow: false,
+                gridSize: gridSize,
+                solved: List.generate(puzzle.cols, (col) => puzzle.isColumnSolved(col)),
+                useSolvedColor: showCluesSolution,
+              ),
             ),
           ),
 
@@ -102,7 +123,13 @@ class GameScreen extends StatelessWidget {
               // Left Clue Numbers
               SizedBox(
                 width: dynamicClueWidth,
-                child: ClueNumbersWidget(clues: puzzle.rowClues, isRow: true, gridSize: gridSize),
+                child: ClueNumbersWidget(
+                  clues: puzzle.rowClues,
+                  isRow: true,
+                  gridSize: gridSize,
+                  solved: List.generate(puzzle.rows, (row) => puzzle.isRowSolved(row)),
+                  useSolvedColor: showCluesSolution,
+                ),
               ),
 
               // Puzzle Grid
