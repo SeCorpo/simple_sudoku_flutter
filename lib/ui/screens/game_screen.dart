@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/game/game_bloc.dart';
 import '../../bloc/provider/provider_bloc.dart';
+import '../../core/theme/button_styles.dart';
 import '../../models/puzzle_model.dart';
+import '../widgets/confirmation_dialog_widget.dart';
 import '../widgets/congratulations_widget.dart';
 import '../widgets/game_grid.dart';
 import '../widgets/clue_numbers_widget.dart';
@@ -58,6 +60,10 @@ class GameScreen extends StatelessWidget {
             context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: state.puzzle));
             context.read<ProviderBloc>().add(LoadSavedPuzzles());
           } else if (state is NextPuzzleNotFoundError && !state.fromHome) {
+            SnackBarWidget.show(context, state.error, isError: true);
+          } else if (state is PuzzleRemoved) {
+            SnackBarWidget.show(context, "Puzzle removed successfully!");
+          } else if (state is RemovePuzzleError) {
             SnackBarWidget.show(context, state.error, isError: true);
           }
         },
@@ -148,8 +154,10 @@ class GameScreen extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          // "New Puzzle" Button
+          // "New Puzzle" and "Remove Puzzle" Buttons
           _buildNewPuzzleButton(context, puzzle.cols),
+          const SizedBox(height: 10),
+          _buildRemovePuzzleButton(context, puzzle.puzzleId),
           const SizedBox(height: 10),
 
           // Show "You Won!" and Save Button if the game is completed
@@ -192,6 +200,28 @@ class GameScreen extends StatelessWidget {
       ],
     );
   }
+
+  /// "Remove Puzzle" button to delete the current puzzle
+  Widget _buildRemovePuzzleButton(BuildContext context, String puzzleId) {
+    return ElevatedButton(
+      style: AppButtonStyles.redButtonStyle,
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) => ConfirmationDialogWidget(
+            title: "Remove Puzzle",
+            content: "Are you sure you want to remove this puzzle? This action cannot be undone.",
+            onConfirm: () {
+              context.read<ProviderBloc>().add(RemovePuzzle(puzzleId: puzzleId));
+              Navigator.pop(context);
+            },
+          ),
+        );
+      },
+      child: const Text("Remove Puzzle"),
+    );
+  }
+
   /// "Next Puzzle" button that triggers fetching of the next uncompleted puzzle
   Widget _buildNextPuzzleButton(BuildContext context) {
     return ElevatedButton(

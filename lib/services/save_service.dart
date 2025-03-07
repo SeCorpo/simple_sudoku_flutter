@@ -98,6 +98,20 @@ class SaveService {
     }
   }
 
+  /// Remove a single puzzle by ID
+  Future<void> removePuzzle(String puzzleId) async {
+    try {
+      final file = await _getFile();
+      List<PuzzleModel> puzzles = await loadPuzzles();
+
+      puzzles.removeWhere((p) => p.puzzleId == puzzleId);
+
+      final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
+      await file.writeAsString(jsonString);
+    } catch (e) {
+      print("Error removing puzzle: $e");
+    }
+  }
 
   /// Clear saved puzzles (for debugging)
   Future<void> clearSavedPuzzles() async {

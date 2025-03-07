@@ -44,3 +44,13 @@ class NextPuzzleNotFoundError extends ProviderState {
 
   NextPuzzleNotFoundError({required this.error, required this.fromHome});
 }
+
+class PuzzleRemoved extends ProviderState {
+  final String puzzleId;
+  PuzzleRemoved({required this.puzzleId});
+}
+
+class RemovePuzzleError extends ProviderState {
+  final String error;
+  RemovePuzzleError({required this.error});
+}

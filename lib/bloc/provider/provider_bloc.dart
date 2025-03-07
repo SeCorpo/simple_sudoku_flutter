@@ -16,6 +16,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
     on<MarkPuzzleCompleted>(_onMarkPuzzleCompleted);
     on<ResetProgress>(_onResetProgress);
     on<GetNextUncompletedPuzzle>(_onGetNextUncompletedPuzzle);
+    on<RemovePuzzle>(_onRemovePuzzle);
   }
 
   /// Load saved puzzles and sort them by difficulty and star rating
@@ -88,4 +89,15 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
     }
   }
 
+  void _onRemovePuzzle(RemovePuzzle event, Emitter<ProviderState> emit) async {
+    try {
+      await _saveService.removePuzzle(event.puzzleId);
+      emit(PuzzleRemoved(puzzleId: event.puzzleId));
+
+      // Reload saved puzzles after removal
+      add(LoadSavedPuzzles());
+    } catch (e) {
+      emit(RemovePuzzleError(error: "Failed to remove puzzle: $e"));
+    }
+  }
 }
