@@ -13,8 +13,13 @@ class GameLoaded extends GameState {
   final PuzzleModel puzzle;
   final bool showSolution;
   final bool showCluesSolution;
+  final int? timeLeft;
 
-  GameLoaded({required this.puzzle, this.showSolution = false, this.showCluesSolution = false});
+  GameLoaded({
+    required this.puzzle,
+    this.showSolution = false,
+    this.showCluesSolution = false,
+    this.timeLeft,});
 }
 
 class GameWon extends GameState {
@@ -22,3 +27,5 @@ class GameWon extends GameState {
 
   GameWon({required this.puzzle});
 }
+
+class GameOver extends GameState {}

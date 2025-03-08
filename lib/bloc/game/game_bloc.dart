@@ -2,20 +2,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import '../../models/puzzle_model.dart';
 import '../../services/puzzle_service.dart';
+import '../timer/timer_bloc.dart';
 
 part 'game_event.dart';
 part 'game_state.dart';
 
 class GameBloc extends Bloc<GameEvent, GameState> {
   final PuzzleService _puzzleService;
+  final TimerBloc _timerBloc;
+  int? _timeLimit;
 
-  GameBloc(this._puzzleService) : super(GameInitial(defaultPuzzleSize: 5)) {
+  GameBloc(this._puzzleService, this._timerBloc) : super(GameInitial(defaultPuzzleSize: 5)) {
     on<GenerateNewPuzzle>(_onGenerateNewPuzzle);
     on<StartGameWithPuzzle>(_onStartGameWithPuzzle);
     on<ToggleSolution>(_onToggleSolution);
     on<ToggleCell>(_onToggleCell);
     on<GameWonEvent>(_onGameWon);
     on<ToggleCluesSolution>(_onToggleCluesSolution);
+    on<TimerRunComplete>(_onTimerComplete);
   }
 
   void _onGenerateNewPuzzle(GenerateNewPuzzle event, Emitter<GameState> emit) {
@@ -24,7 +28,18 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   void _onStartGameWithPuzzle(StartGameWithPuzzle event, Emitter<GameState> emit) {
-    emit(GameLoaded(puzzle: event.puzzle, showSolution: false, showCluesSolution: false));
+    _timeLimit = event.time; // Set time limit
+
+    emit(GameLoaded(
+      puzzle: event.puzzle,
+      showSolution: false,
+      showCluesSolution: false,
+      timeLeft: _timeLimit,));
+
+    // If time is given, start the timer
+    if (_timeLimit != null && _timeLimit! > 0) {
+      _timerBloc.add(TimerStarted(_timeLimit!));
+    }
   }
 
   void _onToggleSolution(ToggleSolution event, Emitter<GameState> emit) {
@@ -33,7 +48,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       emit(GameLoaded(
           puzzle: currentState.puzzle,
           showSolution: !currentState.showSolution,
-          showCluesSolution: currentState.showCluesSolution));
+          showCluesSolution: currentState.showCluesSolution,
+          timeLeft: currentState.timeLeft
+      ));
     }
   }
 
@@ -46,13 +63,16 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         add(GameWonEvent(puzzle: currentState.puzzle));
       } else {
         emit(GameLoaded(
-          puzzle: currentState.puzzle,
-          showSolution: currentState.showSolution,
-          showCluesSolution: currentState.showCluesSolution,));
+            puzzle: currentState.puzzle,
+            showSolution: currentState.showSolution,
+            showCluesSolution: currentState.showCluesSolution,
+            timeLeft: currentState.timeLeft
+        ));
       }
     }
   }
   void _onGameWon(GameWonEvent event, Emitter<GameState> emit) {
+    _timerBloc.add(TimerReset()); // Stop timer
     emit(GameWon(puzzle: event.puzzle));
   }
 
@@ -63,7 +83,12 @@ class GameBloc extends Bloc<GameEvent, GameState> {
         puzzle: currentState.puzzle,
         showSolution: currentState.showSolution,
         showCluesSolution: !currentState.showCluesSolution,
+        timeLeft: currentState.timeLeft,
       ));
     }
+  }
+
+  void _onTimerComplete(TimerRunComplete event, Emitter<GameState> emit) {
+    emit(GameOver()); // Game over when timer runs out
   }
 }

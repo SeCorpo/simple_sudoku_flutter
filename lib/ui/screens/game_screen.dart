@@ -8,6 +8,7 @@ import '../widgets/confirmation_dialog_widget.dart';
 import '../widgets/congratulations_widget.dart';
 import '../widgets/game_grid.dart';
 import '../widgets/clue_numbers_widget.dart';
+import '../widgets/game_timer_widget.dart';
 import '../widgets/save_puzzle_widget.dart';
 import '../widgets/slider_widget.dart';
 import '../widgets/snackbar_widget.dart';
@@ -106,6 +107,9 @@ class GameScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+
+          const GameTimerWidget(), // Show the timer at the top
+
           // Top Clue Numbers
           SizedBox(
             height: dynamicClueHeight,

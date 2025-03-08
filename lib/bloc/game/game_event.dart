@@ -10,7 +10,9 @@ class GenerateNewPuzzle extends GameEvent {
 
 class StartGameWithPuzzle extends GameEvent {
   final PuzzleModel puzzle;
-  StartGameWithPuzzle({required this.puzzle});
+  final int? time;
+
+  StartGameWithPuzzle({required this.puzzle, this.time = 60});
 }
 
 class ToggleSolution extends GameEvent {}
@@ -28,3 +30,5 @@ class GameWonEvent extends GameEvent {
 }
 
 class ToggleCluesSolution extends GameEvent {}
+
+class TimerRunComplete extends GameEvent {}
