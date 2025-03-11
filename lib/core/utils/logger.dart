@@ -1,8 +1,8 @@
 enum LogLevel { verbose, debug, info, warning, error }
 
 class Logger {
-  static final Logger _instance = Logger._internal();
-  factory Logger() => _instance;
+  static final Logger instance = Logger._internal(); // Direct static access
+  factory Logger() => instance; // Ensures the singleton pattern
 
   LogLevel _logLevel = LogLevel.verbose;
 
@@ -33,9 +33,9 @@ class Logger {
     print(logMessage);
   }
 
-  void v(String message, {String? tag}) => log(LogLevel.verbose, message, tag: tag);
-  void d(String message, {String? tag}) => log(LogLevel.debug, message, tag: tag);
-  void i(String message, {String? tag}) => log(LogLevel.info, message, tag: tag);
-  void w(String message, {String? tag}) => log(LogLevel.warning, message, tag: tag);
-  void e(String message, {String? tag}) => log(LogLevel.error, message, tag: tag);
+  static void v(String message, {String? tag}) => instance.log(LogLevel.verbose, message, tag: tag);
+  static void d(String message, {String? tag}) => instance.log(LogLevel.debug, message, tag: tag);
+  static void i(String message, {String? tag}) => instance.log(LogLevel.info, message, tag: tag);
+  static void w(String message, {String? tag}) => instance.log(LogLevel.warning, message, tag: tag);
+  static void e(String message, {String? tag}) => instance.log(LogLevel.error, message, tag: tag);
 }

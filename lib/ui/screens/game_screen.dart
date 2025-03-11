@@ -80,7 +80,7 @@ class GameScreen extends StatelessWidget {
                 context.read<ProviderBloc>().add(
                     MarkPuzzleCompleted(puzzleId: state.puzzle.puzzleId));
               } else {
-                Logger().i("Puzzle '${state.puzzle.puzzleId}' is already completed.");
+                Logger.i("Puzzle '${state.puzzle.puzzleId}' is already completed.");
               }
               return _buildGameUI(context, state.puzzle, false, false, isWon: true);
             } else {

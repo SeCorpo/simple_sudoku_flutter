@@ -32,7 +32,7 @@ class SaveService {
       final List<dynamic> jsonList = jsonDecode(content);
       return jsonList.map((json) => PuzzleModel.fromJson(json)).toList();
     } catch (e) {
-      Logger().e("Error loading puzzles: $e");
+      Logger.e("Error loading puzzles: $e");
       return [];
     }
   }
@@ -44,7 +44,7 @@ class SaveService {
       List<PuzzleModel> puzzles = await loadPuzzles();
 
       if (puzzles.any((p) => p.puzzleId == puzzle.puzzleId)) {
-        Logger().w("Puzzle with ID '${puzzle.puzzleId}' already exists. Skipping save.");
+        Logger.w("Puzzle with ID '${puzzle.puzzleId}' already exists. Skipping save.");
         return;
       }
 
@@ -53,7 +53,7 @@ class SaveService {
       final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
       await file.writeAsString(jsonString);
     } catch (e) {
-      Logger().e("Error saving puzzle: $e");
+      Logger.e("Error saving puzzle: $e");
     }
   }
 
@@ -66,7 +66,7 @@ class SaveService {
       // Find the index of the puzzle
       int index = puzzles.indexWhere((p) => p.puzzleId == puzzleId);
       if (index == -1) {
-        Logger().w("Puzzle '$puzzleId' not found.");
+        Logger.w("Puzzle '$puzzleId' not found.");
         return;
       }
 
@@ -74,9 +74,9 @@ class SaveService {
 
       // Save updated puzzles
       await file.writeAsString(jsonEncode(puzzles.map((p) => p.toJson()).toList()));
-      Logger().i("Puzzle '$puzzleId' marked as completed.");
+      Logger.i("Puzzle '$puzzleId' marked as completed.");
     } catch (e) {
-      Logger().w("Error marking puzzle as completed: $e");
+      Logger.w("Error marking puzzle as completed: $e");
     }
   }
 
@@ -91,7 +91,7 @@ class SaveService {
       final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
       await file.writeAsString(jsonString);
     } catch (e) {
-      Logger().e("Error resetting progress: $e");
+      Logger.e("Error resetting progress: $e");
     }
   }
 
@@ -106,7 +106,7 @@ class SaveService {
       final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
       await file.writeAsString(jsonString);
     } catch (e) {
-      Logger().e("Error removing puzzle: $e");
+      Logger.e("Error removing puzzle: $e");
     }
   }
 
@@ -118,7 +118,7 @@ class SaveService {
         await file.writeAsString(jsonEncode([]));
       }
     } catch (e) {
-      Logger().e("Error clearing puzzles: $e");
+      Logger.e("Error clearing puzzles: $e");
     }
   }
 }
