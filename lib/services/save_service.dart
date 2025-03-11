@@ -50,8 +50,8 @@ class SaveService {
 
       puzzles.add(puzzle);
 
-      final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
-      await file.writeAsString(jsonString);
+      await file.writeAsString(jsonEncode(puzzles.map((p) => p.toJson()).toList()));
+      Logger.i("Puzzle with ID '${puzzle.puzzleId}' saved.");
     } catch (e) {
       Logger.e("Error saving puzzle: $e");
     }
@@ -63,7 +63,6 @@ class SaveService {
       final file = await _getFile();
       List<PuzzleModel> puzzles = await loadPuzzles();
 
-      // Find the index of the puzzle
       int index = puzzles.indexWhere((p) => p.puzzleId == puzzleId);
       if (index == -1) {
         Logger.w("Puzzle '$puzzleId' not found.");
@@ -72,7 +71,6 @@ class SaveService {
 
       puzzles[index] = puzzles[index].copyWith(completed: true);
 
-      // Save updated puzzles
       await file.writeAsString(jsonEncode(puzzles.map((p) => p.toJson()).toList()));
       Logger.i("Puzzle '$puzzleId' marked as completed.");
     } catch (e) {
@@ -88,8 +86,8 @@ class SaveService {
 
       puzzles = puzzles.map((puzzle) => puzzle.copyWith(completed: false)).toList();
 
-      final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
-      await file.writeAsString(jsonString);
+      await file.writeAsString(jsonEncode(puzzles.map((p) => p.toJson()).toList()));
+      Logger.i("All puzzles completed set to false");
     } catch (e) {
       Logger.e("Error resetting progress: $e");
     }
@@ -101,10 +99,16 @@ class SaveService {
       final file = await _getFile();
       List<PuzzleModel> puzzles = await loadPuzzles();
 
-      puzzles.removeWhere((p) => p.puzzleId == puzzleId);
+      final int index = puzzles.indexWhere((p) => p.puzzleId == puzzleId);
+      if (index == -1) {
+        Logger.w("Puzzle not found: $puzzleId");
+        return;
+      }
 
-      final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
-      await file.writeAsString(jsonString);
+      puzzles.removeAt(index);
+
+      await file.writeAsString(jsonEncode(puzzles.map((p) => p.toJson()).toList()));
+      Logger.i("Puzzle removed: $puzzleId");
     } catch (e) {
       Logger.e("Error removing puzzle: $e");
     }
