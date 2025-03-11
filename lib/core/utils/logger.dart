@@ -1,18 +1,14 @@
-enum LogLevel { verbose, debug, info, warning, error }
+enum LogLevel { debug, info, warning, error, none }
 
 class Logger {
   Logger._(); // Private constructor prevents instantiation
 
-  static LogLevel _logLevel = LogLevel.verbose;
+  static LogLevel _logLevel = LogLevel.debug;
 
   static const String _resetColor = '\x1B[0m';
 
   static void setLogLevel(LogLevel level) {
     _logLevel = level;
-  }
-
-  static void v(String message, {String? tag}) {
-    _log(LogLevel.verbose, '\x1B[37m', "VERBOSE", message, tag); // White
   }
 
   static void d(String message, {String? tag}) {
