@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import '../core/utils/logger.dart';
 import '../models/puzzle_model.dart';
 
 class SaveService {
@@ -31,7 +32,7 @@ class SaveService {
       final List<dynamic> jsonList = jsonDecode(content);
       return jsonList.map((json) => PuzzleModel.fromJson(json)).toList();
     } catch (e) {
-      print("Error loading puzzles: $e");
+      Logger.e("Error loading puzzles: $e");
       return [];
     }
   }
@@ -43,7 +44,7 @@ class SaveService {
       List<PuzzleModel> puzzles = await loadPuzzles();
 
       if (puzzles.any((p) => p.puzzleId == puzzle.puzzleId)) {
-        print("Puzzle with ID '${puzzle.puzzleId}' already exists. Skipping save.");
+        Logger.w("Puzzle with ID '${puzzle.puzzleId}' already exists. Skipping save.");
         return;
       }
 
@@ -52,7 +53,7 @@ class SaveService {
       final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
       await file.writeAsString(jsonString);
     } catch (e) {
-      print("Error saving puzzle: $e");
+      Logger.e("Error saving puzzle: $e");
     }
   }
 
@@ -62,24 +63,20 @@ class SaveService {
       final file = await _getFile();
       List<PuzzleModel> puzzles = await loadPuzzles();
 
-      bool updated = false;
-
-      puzzles = puzzles.map((puzzle) {
-        if (puzzle.puzzleId == puzzleId && !puzzle.completed) {
-          updated = true;
-          return puzzle.copyWith(completed: true);
-        }
-        return puzzle;
-      }).toList();
-
-      if (updated) {
-        final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
-        await file.writeAsString(jsonString);
-      } else {
-        print("Puzzle with ID '$puzzleId' not found or already completed.");
+      // Find the index of the puzzle
+      int index = puzzles.indexWhere((p) => p.puzzleId == puzzleId);
+      if (index == -1) {
+        Logger.w("Puzzle '$puzzleId' not found.");
+        return;
       }
+
+      puzzles[index] = puzzles[index].copyWith(completed: true);
+
+      // Save updated puzzles
+      await file.writeAsString(jsonEncode(puzzles.map((p) => p.toJson()).toList()));
+      Logger.i("Puzzle '$puzzleId' marked as completed.");
     } catch (e) {
-      print("Error marking puzzle as completed: $e");
+      Logger.w("Error marking puzzle as completed: $e");
     }
   }
 
@@ -94,7 +91,7 @@ class SaveService {
       final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
       await file.writeAsString(jsonString);
     } catch (e) {
-      print("Error resetting progress: $e");
+      Logger.e("Error resetting progress: $e");
     }
   }
 
@@ -109,7 +106,7 @@ class SaveService {
       final String jsonString = jsonEncode(puzzles.map((p) => p.toJson()).toList());
       await file.writeAsString(jsonString);
     } catch (e) {
-      print("Error removing puzzle: $e");
+      Logger.e("Error removing puzzle: $e");
     }
   }
 
@@ -121,7 +118,7 @@ class SaveService {
         await file.writeAsString(jsonEncode([]));
       }
     } catch (e) {
-      print("Error clearing puzzles: $e");
+      Logger.e("Error clearing puzzles: $e");
     }
   }
 }

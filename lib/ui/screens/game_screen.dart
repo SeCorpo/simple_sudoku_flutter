@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/game/game_bloc.dart';
 import '../../bloc/provider/provider_bloc.dart';
 import '../../core/theme/button_styles.dart';
+import '../../core/utils/logger.dart';
 import '../../models/puzzle_model.dart';
 import '../widgets/confirmation_dialog_widget.dart';
 import '../widgets/congratulations_widget.dart';
@@ -77,6 +78,8 @@ class GameScreen extends StatelessWidget {
               if(!state.puzzle.completed) {
                 context.read<ProviderBloc>().add(
                     MarkPuzzleCompleted(puzzleId: state.puzzle.puzzleId));
+              } else {
+                Logger.i("Puzzle '${state.puzzle.puzzleId}' is already completed.");
               }
               return _buildGameUI(context, state.puzzle, false, false, isWon: true);
             } else {
