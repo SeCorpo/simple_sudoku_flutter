@@ -81,7 +81,7 @@ class GameScreen extends StatelessWidget {
               } else {
                 Logger.i("Puzzle '${state.puzzle.puzzleId}' is already completed.");
               }
-              return _buildGameUI(context, state.puzzle, false, false, isWon: true);
+              return _buildGameUI(context, state.puzzle, true, true, isWon: true);
             } else {
               return const Center(child: Text("Unknown state"));
             }

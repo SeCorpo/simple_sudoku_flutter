@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:simple_sudoku_flutter/ui/screens/splash_screen.dart';
 import 'bloc/game/game_bloc.dart';
 import 'bloc/provider/provider_bloc.dart';
 import 'bloc/theme/theme_bloc.dart';
 import 'core/theme/theme.dart';
 import 'services/puzzle_service.dart';
 import 'services/save_service.dart';
-import 'ui/screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
               theme: AppTheme.lightTheme,
               darkTheme: AppTheme.darkTheme,
               themeMode: state.themeMode,
-              home: const HomeScreen(),
+              home: const SplashScreen(),
             );
           },
         ),
