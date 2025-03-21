@@ -45,7 +45,6 @@ class SaveService {
       List<PuzzleModel> puzzles = await loadPuzzles();
 
       if (puzzles.any((p) => p.puzzleId == puzzle.puzzleId)) {
-        Logger.w("Puzzle with ID '${puzzle.puzzleId}' already exists. Skipping save.");
         throw PuzzleAlreadyExistsException();
       }
 

@@ -75,11 +75,13 @@ class GameScreen extends StatelessWidget {
             } else if (state is GameLoaded) {
               return _buildGameUI(context, state.puzzle, state.showSolution, state.showCluesSolution);
             } else if (state is GameWon) {
-              if(!state.puzzle.completed) {
+              if(state.puzzle.completed) {
+                Logger.i("Puzzle '${state.puzzle.puzzleId}' is already completed.");
+              } else if(state.puzzle.starRating == 0) {
+                Logger.i("Puzzle '${state.puzzle.puzzleId}' is not saved and therefor cant be completed.");
+              } else {
                 context.read<ProviderBloc>().add(
                     MarkPuzzleCompleted(puzzleId: state.puzzle.puzzleId));
-              } else {
-                Logger.i("Puzzle '${state.puzzle.puzzleId}' is already completed.");
               }
               return _buildGameUI(context, state.puzzle, true, true, isWon: true);
             } else {
