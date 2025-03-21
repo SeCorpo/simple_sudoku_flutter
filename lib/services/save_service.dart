@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import '../core/custom_exceptions.dart';
 import '../core/utils/logger.dart';
 import '../models/puzzle_model.dart';
 
@@ -33,7 +34,7 @@ class SaveService {
       return jsonList.map((json) => PuzzleModel.fromJson(json)).toList();
     } catch (e) {
       Logger.e("Error loading puzzles: $e");
-      return [];
+      throw PuzzleLoadException();
     }
   }
 
@@ -45,7 +46,7 @@ class SaveService {
 
       if (puzzles.any((p) => p.puzzleId == puzzle.puzzleId)) {
         Logger.w("Puzzle with ID '${puzzle.puzzleId}' already exists. Skipping save.");
-        return;
+        throw PuzzleAlreadyExistsException();
       }
 
       puzzles.add(puzzle);
@@ -54,6 +55,8 @@ class SaveService {
       Logger.i("Puzzle with ID '${puzzle.puzzleId}' saved.");
     } catch (e) {
       Logger.e("Error saving puzzle: $e");
+      if (e is PuzzleAlreadyExistsException) rethrow;
+      throw PuzzleSaveException();
     }
   }
 
@@ -66,7 +69,7 @@ class SaveService {
       int index = puzzles.indexWhere((p) => p.puzzleId == puzzleId);
       if (index == -1) {
         Logger.w("Puzzle '$puzzleId' not found.");
-        return;
+        throw PuzzleNotFoundException();
       }
 
       puzzles[index] = puzzles[index].copyWith(completed: true);
@@ -75,6 +78,8 @@ class SaveService {
       Logger.i("Puzzle '$puzzleId' marked as completed.");
     } catch (e) {
       Logger.w("Error marking puzzle as completed: $e");
+      if (e is PuzzleNotFoundException) rethrow;
+      throw PuzzleSaveException();
     }
   }
 
@@ -90,6 +95,7 @@ class SaveService {
       Logger.i("All puzzles completed set to false");
     } catch (e) {
       Logger.e("Error resetting progress: $e");
+      throw PuzzleResetException();
     }
   }
 
@@ -102,7 +108,7 @@ class SaveService {
       final int index = puzzles.indexWhere((p) => p.puzzleId == puzzleId);
       if (index == -1) {
         Logger.w("Puzzle not found: $puzzleId");
-        return;
+        throw PuzzleNotFoundException();
       }
 
       puzzles.removeAt(index);
@@ -111,6 +117,8 @@ class SaveService {
       Logger.i("Puzzle removed: $puzzleId");
     } catch (e) {
       Logger.e("Error removing puzzle: $e");
+      if (e is PuzzleNotFoundException) rethrow;
+      throw PuzzleRemoveException();
     }
   }
 
@@ -123,6 +131,7 @@ class SaveService {
       }
     } catch (e) {
       Logger.e("Error clearing puzzles: $e");
+      throw PuzzleClearException();
     }
   }
 }

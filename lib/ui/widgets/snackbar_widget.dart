@@ -6,6 +6,9 @@ class SnackBarWidget {
     final brightness = Theme.of(context).brightness;
     final errorColor = AppSnackBarStyles.getErrorColor(brightness);
 
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.clearSnackBars(); // Clear any existing snackbars
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),

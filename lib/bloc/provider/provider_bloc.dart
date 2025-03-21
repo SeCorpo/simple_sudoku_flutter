@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
+import '../../core/custom_exceptions.dart';
 import '../../services/save_service.dart';
 import '../../models/puzzle_model.dart';
 
@@ -22,21 +23,26 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
   /// Load saved puzzles and sort them by difficulty and star rating
   void _onLoadSavedPuzzles(LoadSavedPuzzles event, Emitter<ProviderState> emit) async {
     emit(LoadingSavedPuzzles());
-    final savedPuzzles = await _saveService.loadPuzzles();
+    try {
+      final savedPuzzles = await _saveService.loadPuzzles();
 
-    if (savedPuzzles.isNotEmpty) {
-      savedPuzzles.sort((a, b) {
-        int difficultyComparison = a.difficulty.index.compareTo(b.difficulty.index);
-        if (difficultyComparison != 0) {
-          return difficultyComparison;
-        }
-        return a.starRating.compareTo(b.starRating);
-      });
-      _puzzles = savedPuzzles;
-      emit(SavedPuzzlesLoaded(puzzles: _puzzles));
-    } else {
-      _puzzles = [];
-      emit(NoSavedPuzzles());
+      if (savedPuzzles.isNotEmpty) {
+        savedPuzzles.sort((a, b) {
+          int difficultyComparison = a.difficulty.index.compareTo(b.difficulty.index);
+          if (difficultyComparison != 0) {
+            return difficultyComparison;
+          }
+          return a.starRating.compareTo(b.starRating);
+        });
+
+        _puzzles = savedPuzzles;
+        emit(SavedPuzzlesLoaded(puzzles: _puzzles));
+      } else {
+        _puzzles = [];
+        emit(NoSavedPuzzles());
+      }
+    } catch (e) {
+      emit(SavePuzzleError(error: e.toString()));
     }
   }
 
@@ -49,7 +55,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       // Reload saved puzzles after saving
       add(LoadSavedPuzzles());
     } catch (e) {
-      emit(SavePuzzleError(error: "Failed to save puzzle: $e"));
+      emit(SavePuzzleError(error: e.toString()));
     }
   }
 
@@ -58,7 +64,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       await _saveService.markPuzzleAsCompleted(event.puzzleId);
       add(LoadSavedPuzzles());
     } catch (e) {
-      emit(MarkPuzzleCompletedError(error: "Failed to mark puzzle as completed: $e"));
+      emit(MarkPuzzleCompletedError(error: e.toString()));
     }
   }
 
@@ -67,7 +73,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       await _saveService.resetProgress();
       add(LoadSavedPuzzles());
     } catch (e) {
-      emit(SavePuzzleError(error: "Failed to reset progress: $e"));
+      emit(SavePuzzleError(error: e.toString()));
     }
   }
 
@@ -76,14 +82,14 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
     try {
       final nextPuzzle = _puzzles.firstWhere(
             (puzzle) => !puzzle.completed,
-        orElse: () => throw Exception("No uncompleted puzzles found"),
+        orElse: () => throw PuzzleNotFoundException(),
       );
 
-      if (event.fromHome) {
-        emit(NextPuzzleFromHome(puzzle: nextPuzzle));
-      } else {
-        emit(NextPuzzleFromGame(puzzle: nextPuzzle));
-      }
+      emit(
+        event.fromHome
+            ? NextPuzzleFromHome(puzzle: nextPuzzle)
+            : NextPuzzleFromGame(puzzle: nextPuzzle),
+      );
     } catch (e) {
       emit(NextPuzzleNotFoundError(error: e.toString(), fromHome: event.fromHome));
     }
@@ -97,7 +103,7 @@ class ProviderBloc extends Bloc<ProviderEvent, ProviderState> {
       // Reload saved puzzles after removal
       add(LoadSavedPuzzles());
     } catch (e) {
-      emit(RemovePuzzleError(error: "Failed to remove puzzle: $e"));
+      emit(RemovePuzzleError(error: e.toString()));
     }
   }
 }
