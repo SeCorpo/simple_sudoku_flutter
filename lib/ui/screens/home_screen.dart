@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:simple_sudoku_flutter/core/utils/string_utils.dart';
 import 'package:simple_sudoku_flutter/ui/screens/settings_screen.dart';
+import 'package:simple_sudoku_flutter/ui/screens/shop_screen.dart';
 import '../../bloc/game/game_bloc.dart';
 import '../../bloc/provider/provider_bloc.dart';
 import '../widgets/snackbar_widget.dart';
@@ -24,6 +25,15 @@ class HomeScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.shop),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ShopScreen()),
               );
             },
           ),
