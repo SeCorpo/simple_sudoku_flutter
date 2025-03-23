@@ -20,7 +20,8 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     on<ToggleCell>(_onToggleCell);
     on<GameWonEvent>(_onGameWon);
     on<ToggleCluesSolution>(_onToggleCluesSolution);
-    on<UsePowerup>(_onUsePowerup);
+    on<UseShowCluesPowerup>(_onUseShowCluesPowerup);
+    on<UseSolvedState5sPowerup>(_onUseSolvedState5sPowerup);
   }
 
   void _onGenerateNewPuzzle(GenerateNewPuzzle event, Emitter<GameState> emit) {
@@ -91,50 +92,52 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     }
   }
 
-  void _onUsePowerup(UsePowerup event, Emitter<GameState> emit) async {
+  void _onUseShowCluesPowerup(UseShowCluesPowerup event, Emitter<GameState> emit) async {
     final current = state;
     if (current is! GameLoaded) return;
 
-    final itemCount = await _shopService.getItemCount(event.itemKey);
-    if (itemCount <= 0) {
-      return;
-    }
+    final itemKey = 'show_clues';
+    final itemCount = await _shopService.getItemCount(itemKey);
+    if (itemCount <= 0) return;
 
-    if (event.itemKey == 'show_clues') {
-      await _shopService.consumeItem(event.itemKey);
-      event.onConsumed?.call();
+    await _shopService.consumeItem(itemKey);
+    event.onConsumed?.call();
 
+    emit(GameLoaded(
+      puzzle: current.puzzle,
+      showSolution: current.showSolution,
+      showCluesSolution: true,
+    ));
+
+    Logger.i("Used powerup '$itemKey'");
+  }
+
+  void _onUseSolvedState5sPowerup(UseSolvedState5sPowerup event, Emitter<GameState> emit) async {
+    final current = state;
+    if (current is! GameLoaded) return;
+
+    final itemKey = 'solved_state_5s';
+    final itemCount = await _shopService.getItemCount(itemKey);
+    if (itemCount <= 0) return;
+
+    emit(GameLoaded(
+      puzzle: current.puzzle,
+      showSolution: true,
+      showCluesSolution: current.showCluesSolution,
+    ));
+
+    await _shopService.consumeItem(itemKey);
+    event.onConsumed?.call();
+
+    await Future.delayed(const Duration(seconds: 5));
+
+    if (state is GameLoaded) {
+      final updated = state as GameLoaded;
       emit(GameLoaded(
-        puzzle: current.puzzle,
-        showSolution: current.showSolution,
-        showCluesSolution: true,
+        puzzle: updated.puzzle,
+        showSolution: false,
+        showCluesSolution: updated.showCluesSolution,
       ));
-
-      Logger.i("Used powerup '${event.itemKey}'");
-      return;
-    }
-
-    // Apply effect for 5s solved state (delay happens here)
-    if (event.itemKey == 'solved_state_5s') {
-      emit(GameLoaded(
-        puzzle: current.puzzle,
-        showSolution: true,
-        showCluesSolution: current.showCluesSolution,
-      ));
-
-      await _shopService.consumeItem(event.itemKey);
-      event.onConsumed?.call();
-
-      await Future.delayed(const Duration(seconds: 5));
-
-      if (state is GameLoaded) {
-        final updated = state as GameLoaded;
-        emit(GameLoaded(
-          puzzle: updated.puzzle,
-          showSolution: false,
-          showCluesSolution: updated.showCluesSolution,
-        ));
-      }
     }
   }
 

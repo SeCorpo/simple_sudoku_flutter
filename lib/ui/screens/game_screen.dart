@@ -221,8 +221,7 @@ class GameScreen extends StatelessWidget {
               onPressed: (counts['solved_state_5s'] ?? 0) > 0 && !showSolutionIsActive
                   ? () {
                 context.read<GameBloc>().add(
-                  UsePowerup(
-                    itemKey: 'solved_state_5s',
+                  UseSolvedState5sPowerup(
                     onConsumed: () => context.read<ShopBloc>().add(LoadShop()),
                   ),
                 );
@@ -240,8 +239,7 @@ class GameScreen extends StatelessWidget {
               onPressed: (counts['show_clues'] ?? 0) > 0 && !showCluesAlreadyUsed
                   ? () {
                 context.read<GameBloc>().add(
-                  UsePowerup(
-                    itemKey: 'show_clues',
+                  UseShowCluesPowerup(
                     onConsumed: () => context.read<ShopBloc>().add(LoadShop()),
                   ),
                 );

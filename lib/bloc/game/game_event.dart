@@ -29,9 +29,14 @@ class GameWonEvent extends GameEvent {
 
 class ToggleCluesSolution extends GameEvent {}
 
-class UsePowerup extends GameEvent {
-  final String itemKey;
-  final void Function()? onConsumed; // callback triggered after consumption
+class UseShowCluesPowerup extends GameEvent {
+  final void Function()? onConsumed;
 
-  UsePowerup({required this.itemKey, this.onConsumed});
+  UseShowCluesPowerup({this.onConsumed});
+}
+
+class UseSolvedState5sPowerup extends GameEvent {
+  final void Function()? onConsumed;
+
+  UseSolvedState5sPowerup({this.onConsumed});
 }
