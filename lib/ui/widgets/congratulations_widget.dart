@@ -32,13 +32,29 @@ class CongratulationsWidget extends StatelessWidget {
     return randomAnimation(
       Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Text(
-          message.isNotEmpty ? message : randomMessage,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
+        child: Column(
+          children: [
+            Text(
+              randomMessage,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            if (message.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                message,
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.green,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ]
+          ],
         ),
       ),
       const Duration(seconds: 1),

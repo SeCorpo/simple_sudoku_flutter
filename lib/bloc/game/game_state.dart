@@ -19,6 +19,7 @@ class GameLoaded extends GameState {
 
 class GameWon extends GameState {
   final PuzzleModel puzzle;
+  final int pointsAwarded;
 
-  GameWon({required this.puzzle});
+  GameWon({required this.puzzle, required this.pointsAwarded});
 }

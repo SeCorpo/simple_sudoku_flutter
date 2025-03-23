@@ -97,7 +97,7 @@ class GameScreen extends StatelessWidget {
               } else {
                 context.read<ProviderBloc>().add(MarkPuzzleCompleted(puzzleId: state.puzzle.puzzleId));
               }
-              return _buildGameUI(context, state.puzzle, true, true, isWon: true);
+              return _buildGameUI(context, state.puzzle, true, true, isWon: true, pointsAwarded: state.pointsAwarded,);
             } else {
               return const Center(child: Text("Unknown state"));
             }
@@ -112,7 +112,7 @@ class GameScreen extends StatelessWidget {
     return _buildNewPuzzleButton(context, defaultPuzzleSize);
   }
 
-  Widget _buildGameUI(BuildContext context, PuzzleModel puzzle, bool showSolution, bool showCluesSolution, {bool isWon = false}) {
+  Widget _buildGameUI(BuildContext context, PuzzleModel puzzle, bool showSolution, bool showCluesSolution, {bool isWon = false, int? pointsAwarded,}) {
     double gridSize = MediaQuery.of(context).size.width < 600 ? 30 : 40;
     int maxRowClueLength = puzzle.rowClues.fold(1, (max, clue) => clue.length > max ? clue.length : max);
     int maxColClueLength = puzzle.colClues.fold(1, (max, clue) => clue.length > max ? clue.length : max);
@@ -186,7 +186,11 @@ class GameScreen extends StatelessWidget {
           if (isWon) ...[
             _buildNextPuzzleButton(context),
             const SizedBox(height: 10),
-            const CongratulationsWidget(),
+            CongratulationsWidget(
+              message: pointsAwarded != null && pointsAwarded > 0
+                  ? "+$pointsAwarded points earned!"
+                  : "",
+            ),
             SavePuzzleWidget(puzzle: puzzle)
           ],
         ],

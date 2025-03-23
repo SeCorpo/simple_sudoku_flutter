@@ -113,6 +113,26 @@ class ShopService {
     return purchases.map((key, value) => MapEntry(key, (value as int)));
   }
 
+  /// Add points to the user's balance
+  Future<void> addPoints(int amount) async {
+    if (amount <= 0) {
+      Logger.w("Attempted to add non-positive point value: $amount");
+      return;
+    }
+
+    try {
+      final data = await _readData();
+      final currentPoints = data['points'] ?? 0;
+
+      data['points'] = currentPoints + amount;
+
+      await _writeData(data);
+      Logger.i("Added $amount points. New balance: ${data['points']}");
+    } catch (e) {
+      Logger.e("Error adding points: $e");
+      throw ShopWriteException();
+    }
+  }
 
   /// Reset all purchases and points
   Future<void> resetShopProgress() async {

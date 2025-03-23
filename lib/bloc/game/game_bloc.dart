@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
 import '../../core/utils/logger.dart';
@@ -56,8 +57,27 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       }
     }
   }
-  void _onGameWon(GameWonEvent event, Emitter<GameState> emit) {
-    emit(GameWon(puzzle: event.puzzle));
+  void _onGameWon(GameWonEvent event, Emitter<GameState> emit) async {
+    final puzzle = event.puzzle;
+    int points = 0;
+
+    // Award points is puzzle is won, for buying powerups
+    if (puzzle.starRating != 0) {
+      final multiplier = switch (puzzle.difficulty) {
+        PuzzleDifficulty.float => 0.0,
+        PuzzleDifficulty.easy => 0.2,
+        PuzzleDifficulty.medium => 0.5,
+        PuzzleDifficulty.hard => 1.0,
+        PuzzleDifficulty.expert => 3.0,
+        PuzzleDifficulty.impossible => 5.0,
+      };
+
+      points = max(1, (multiplier * puzzle.starRating).round());
+      await _shopService.addPoints(points);
+      Logger.i("Points awarded $points");
+    }
+
+    emit(GameWon(puzzle: event.puzzle, pointsAwarded: points));
   }
 
   void _onToggleCluesSolution(ToggleCluesSolution event, Emitter<GameState> emit) {
