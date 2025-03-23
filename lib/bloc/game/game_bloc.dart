@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:meta/meta.dart';
-import '../../core/utils/logger.dart';
 import '../../models/puzzle_model.dart';
 import '../../services/puzzle_service.dart';
 import '../../services/shop_service.dart';
@@ -75,7 +74,6 @@ class GameBloc extends Bloc<GameEvent, GameState> {
 
       points = max(1, (multiplier * puzzle.starRating).round());
       await _shopService.addPoints(points);
-      Logger.i("Points awarded $points");
     }
 
     emit(GameWon(puzzle: event.puzzle, pointsAwarded: points));
@@ -108,8 +106,6 @@ class GameBloc extends Bloc<GameEvent, GameState> {
       showSolution: current.showSolution,
       showCluesSolution: true,
     ));
-
-    Logger.i("Used powerup '$itemKey'");
   }
 
   void _onUseSolvedState5sPowerup(UseSolvedState5sPowerup event, Emitter<GameState> emit) async {
