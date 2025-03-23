@@ -79,6 +79,28 @@ class ShopService {
     }
   }
 
+  /// Consume (use) one unit of a purchased item
+  Future<void> consumeItem(String itemKey) async {
+    try {
+      final data = await _readData();
+      int count = (data['purchases'][itemKey] ?? 0) as int;
+
+      if (count <= 0) {
+        Logger.w("Attempted to consume item '$itemKey' with 0 count.");
+        throw NotEnoughItemsException();
+      }
+
+      data['purchases'][itemKey] = count - 1;
+      await _writeData(data);
+
+      Logger.i("Consumed one '$itemKey'. Remaining: ${data['purchases'][itemKey]}");
+    } catch (e) {
+      Logger.e("Error consuming item '$itemKey': $e");
+      if (e is NotEnoughItemsException) rethrow;
+      throw ShopConsumeException();
+    }
+  }
+
   /// Get item count instead of boolean
   Future<int> getItemCount(String itemKey) async {
     final data = await _readData();

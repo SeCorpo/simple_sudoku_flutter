@@ -28,7 +28,9 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(create: (context) => GameBloc(context.read<PuzzleService>())),
+          BlocProvider(create: (context) => GameBloc(
+            context.read<PuzzleService>(),
+            context.read<ShopService>(),)),
           BlocProvider(create: (context) => ProviderBloc(context.read<SaveService>())),
           BlocProvider(create: (context) => ThemeBloc()),
           BlocProvider(create: (context) => ShopBloc(context.read<ShopService>())),

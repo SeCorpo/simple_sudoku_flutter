@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/shop/shop_bloc.dart';
+import '../widgets/shop_item_tile_widget.dart';
 import '../widgets/snackbar_widget.dart';
 
 class ShopScreen extends StatelessWidget {
@@ -74,32 +75,3 @@ class ShopScreen extends StatelessWidget {
   }
 }
 
-class ShopItemTile extends StatelessWidget {
-  final String title;
-  final int cost;
-  final int count;
-  final VoidCallback onBuy;
-
-  const ShopItemTile({
-    required this.title,
-    required this.cost,
-    required this.count,
-    required this.onBuy,
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        title: Text(title),
-        subtitle: Text('Cost: $cost points • Owned: $count'),
-        trailing: ElevatedButton(
-          onPressed: onBuy,
-          child: const Text('Buy'),
-        ),
-      ),
-    );
-  }
-}

@@ -60,3 +60,13 @@ class ShopResetException implements Exception {
   @override
   String toString() => "Failed to reset shop progress.";
 }
+
+class NotEnoughItemsException implements Exception {
+  @override
+  String toString() => "Not enough of this item to consume.";
+}
+
+class ShopConsumeException implements Exception {
+  @override
+  String toString() => "Failed to consume item.";
+}

@@ -21,7 +21,11 @@ class ShopBloc extends Bloc<ShopEvent, ShopState> {
         'solved_state_5s': await _shopService.getItemCount('solved_state_5s'),
         'show_clues': await _shopService.getItemCount('show_clues'),
       };
-      emit(ShopLoaded(points: points, itemCounts: powerups));
+      emit(ShopLoaded(
+        points: points,
+        itemCounts: powerups,
+        infoMessage: event is RefreshWithMessage ? event.message : null,
+      ));
     } catch (e) {
       emit(ShopError(error: e.toString()));
     }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/game/game_bloc.dart';
 import '../../bloc/provider/provider_bloc.dart';
+import '../../bloc/shop/shop_bloc.dart';
 import '../../core/theme/button_styles.dart';
 import '../../core/utils/logger.dart';
 import '../../models/puzzle_model.dart';
@@ -9,6 +10,7 @@ import '../widgets/confirmation_dialog_widget.dart';
 import '../widgets/congratulations_widget.dart';
 import '../widgets/game_grid.dart';
 import '../widgets/clue_numbers_widget.dart';
+import '../widgets/icon_button_with_badge_widget.dart';
 import '../widgets/save_puzzle_widget.dart';
 import '../widgets/slider_widget.dart';
 import '../widgets/snackbar_widget.dart';
@@ -18,6 +20,8 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<ShopBloc>().add(LoadShop());
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Simple Sudoku Game"),
@@ -49,25 +53,36 @@ class GameScreen extends StatelessWidget {
         ],
       ),
 
-      body: BlocListener<ProviderBloc, ProviderState>(
-        listener: (context, state) {
-          if (state is PuzzleSaved) {
-            SnackBarWidget.show(context, "Puzzle saved successfully!");
-          } else if (state is SavePuzzleError) {
-            SnackBarWidget.show(context, state.error, isError: true);
-          } else if (state is MarkPuzzleCompletedError) {
-            SnackBarWidget.show(context, state.error, isError: true);
-          } else if (state is NextPuzzleFromGame) {
-            context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: state.puzzle));
-            context.read<ProviderBloc>().add(LoadSavedPuzzles());
-          } else if (state is NextPuzzleNotFoundError && !state.fromHome) {
-            SnackBarWidget.show(context, state.error, isError: true);
-          } else if (state is PuzzleRemoved) {
-            SnackBarWidget.show(context, "Puzzle removed successfully!");
-          } else if (state is RemovePuzzleError) {
-            SnackBarWidget.show(context, state.error, isError: true);
-          }
-        },
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<ProviderBloc, ProviderState>(
+            listener: (context, state) {
+              if (state is PuzzleSaved) {
+                SnackBarWidget.show(context, "Puzzle saved successfully!");
+              } else if (state is SavePuzzleError) {
+                SnackBarWidget.show(context, state.error, isError: true);
+              } else if (state is MarkPuzzleCompletedError) {
+                SnackBarWidget.show(context, state.error, isError: true);
+              } else if (state is NextPuzzleFromGame) {
+                context.read<GameBloc>().add(StartGameWithPuzzle(puzzle: state.puzzle));
+                context.read<ProviderBloc>().add(LoadSavedPuzzles());
+              } else if (state is NextPuzzleNotFoundError && !state.fromHome) {
+                SnackBarWidget.show(context, state.error, isError: true);
+              } else if (state is PuzzleRemoved) {
+                SnackBarWidget.show(context, "Puzzle removed successfully!");
+              } else if (state is RemovePuzzleError) {
+                SnackBarWidget.show(context, state.error, isError: true);
+              }
+            },
+          ),
+          BlocListener<ShopBloc, ShopState>(
+            listener: (context, state) {
+              if (state is ShopLoaded && state.infoMessage != null) {
+                SnackBarWidget.show(context, state.infoMessage!);
+              }
+            },
+          ),
+        ],
         child: BlocBuilder<GameBloc, GameState>(
           builder: (context, state) {
             if (state is GameInitial) {
@@ -75,13 +90,12 @@ class GameScreen extends StatelessWidget {
             } else if (state is GameLoaded) {
               return _buildGameUI(context, state.puzzle, state.showSolution, state.showCluesSolution);
             } else if (state is GameWon) {
-              if(state.puzzle.completed) {
+              if (state.puzzle.completed) {
                 Logger.i("Puzzle '${state.puzzle.puzzleId}' is already completed.");
-              } else if(state.puzzle.starRating == 0) {
-                Logger.i("Puzzle '${state.puzzle.puzzleId}' is not saved and therefor cant be completed.");
+              } else if (state.puzzle.starRating == 0) {
+                Logger.i("Puzzle '${state.puzzle.puzzleId}' is not saved and therefore can't be completed.");
               } else {
-                context.read<ProviderBloc>().add(
-                    MarkPuzzleCompleted(puzzleId: state.puzzle.puzzleId));
+                context.read<ProviderBloc>().add(MarkPuzzleCompleted(puzzleId: state.puzzle.puzzleId));
               }
               return _buildGameUI(context, state.puzzle, true, true, isWon: true);
             } else {
@@ -111,6 +125,9 @@ class GameScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          _buildPowerupRow(context),
+          const SizedBox(height: 10),
+
           // Top Clue Numbers
           SizedBox(
             height: dynamicClueHeight,
@@ -177,6 +194,63 @@ class GameScreen extends StatelessWidget {
     )
     );
   }
+
+  Widget _buildPowerupRow(BuildContext context) {
+    final gameState = context.watch<GameBloc>().state;
+    final showCluesAlreadyUsed =
+        gameState is GameLoaded && gameState.showCluesSolution;
+    final showSolutionIsActive =
+        gameState is GameLoaded && gameState.showSolution;
+
+    return BlocBuilder<ShopBloc, ShopState>(
+      builder: (context, shopState) {
+        if (shopState is! ShopLoaded) return const SizedBox();
+        final counts = shopState.itemCounts;
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButtonWithBadge(
+              icon: Icons.visibility_rounded,
+              count: counts['solved_state_5s'] ?? 0,
+              color: showSolutionIsActive ? Colors.grey : Colors.deepPurple,
+              onPressed: (counts['solved_state_5s'] ?? 0) > 0 && !showSolutionIsActive
+                  ? () {
+                context.read<GameBloc>().add(
+                  UsePowerup(
+                    itemKey: 'solved_state_5s',
+                    onConsumed: () => context.read<ShopBloc>().add(LoadShop()),
+                  ),
+                );
+              }
+                  : null,
+              countdownSeconds: showSolutionIsActive ? 5 : null,
+            ),
+
+            const SizedBox(width: 8),
+
+            IconButtonWithBadge(
+              icon: Icons.lightbulb_circle,
+              count: counts['show_clues'] ?? 0,
+              color: showCluesAlreadyUsed ? Colors.grey : Colors.teal,
+              onPressed: (counts['show_clues'] ?? 0) > 0 && !showCluesAlreadyUsed
+                  ? () {
+                context.read<GameBloc>().add(
+                  UsePowerup(
+                    itemKey: 'show_clues',
+                    onConsumed: () => context.read<ShopBloc>().add(LoadShop()),
+                  ),
+                );
+              }
+                  : null,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   /// Button to generate a new puzzle with size selection
   Widget _buildNewPuzzleButton(BuildContext context, int puzzleSize) {
