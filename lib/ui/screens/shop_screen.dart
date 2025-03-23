@@ -51,6 +51,8 @@ class ShopScreen extends StatelessWidget {
                           BuyShopItem(itemKey: 'solved_state_5s', cost: 20),
                         );
                       },
+                      icon: Icons.visibility_rounded,
+                      color: Colors.deepPurple,
                     ),
                     ShopItemTile(
                       title: 'Show Clues Solution',
@@ -61,6 +63,8 @@ class ShopScreen extends StatelessWidget {
                           BuyShopItem(itemKey: 'show_clues', cost: 15),
                         );
                       },
+                      icon: Icons.lightbulb_circle,
+                      color: Colors.teal,
                     ),
                   ],
                 );
