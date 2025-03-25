@@ -68,6 +68,7 @@ class GameScreen extends StatelessWidget {
                 context.read<ProviderBloc>().add(LoadSavedPuzzles());
               } else if (state is NextPuzzleNotFoundError && !state.fromHome) {
                 SnackBarWidget.show(context, state.error, isError: true);
+                context.read<ProviderBloc>().add(LoadSavedPuzzles());
               } else if (state is PuzzleRemoved) {
                 SnackBarWidget.show(context, "Puzzle removed successfully!");
               } else if (state is RemovePuzzleError) {

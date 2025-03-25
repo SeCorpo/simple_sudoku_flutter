@@ -69,6 +69,7 @@ class HomeScreen extends StatelessWidget {
                   );
                 } else if (state is NextPuzzleNotFoundError && state.fromHome) {
                   SnackBarWidget.show(context, state.error, isError: true);
+                  context.read<ProviderBloc>().add(LoadSavedPuzzles());
                 }
               },
               child: ElevatedButton(
