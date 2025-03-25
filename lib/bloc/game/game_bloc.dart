@@ -62,19 +62,17 @@ class GameBloc extends Bloc<GameEvent, GameState> {
     int points = 0;
 
     // Award points is puzzle is won, for buying powerups
-    if (puzzle.starRating != 0) {
-      final multiplier = switch (puzzle.difficulty) {
-        PuzzleDifficulty.float => 0.0,
-        PuzzleDifficulty.easy => 0.2,
-        PuzzleDifficulty.medium => 0.5,
-        PuzzleDifficulty.hard => 1.0,
-        PuzzleDifficulty.expert => 3.0,
-        PuzzleDifficulty.impossible => 5.0,
+    final multiplier = switch (puzzle.difficulty) {
+      PuzzleDifficulty.float => 0.0,
+      PuzzleDifficulty.easy => 0.2,
+      PuzzleDifficulty.medium => 0.5,
+      PuzzleDifficulty.hard => 1.0,
+      PuzzleDifficulty.expert => 3.0,
+      PuzzleDifficulty.impossible => 5.0,
       };
 
-      points = max(1, (multiplier * puzzle.starRating).round());
-      await _shopService.addPoints(points);
-    }
+    points = max(1, (multiplier * puzzle.starRating).round());
+    await _shopService.addPoints(points);
 
     emit(GameWon(puzzle: event.puzzle, pointsAwarded: points));
   }
